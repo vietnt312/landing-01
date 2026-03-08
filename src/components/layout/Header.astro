@@ -1,12 +1,13 @@
 ---
+import { Image } from 'astro:assets';
+import { getText as t } from '@/lib/googleSheets';
+
 const navLinks = [
-  { label: 'Trang chủ',    href: '/' },
-  { label: 'Giới thiệu',   href: '/about' },
-  { label: 'Thực đơn',     href: '/menu' },
-  { label: 'Đặt bàn',      href: '/booking' },
-  { label: 'Văn hoá ẩm thực', href: '/food-culture' },
-  { label: 'Tin tức',      href: '/news' },
-  { label: 'Liên hệ',      href: '/contact' },
+  { label: t('layout.header.nav.home'),    href: '/' },
+  { label: t('layout.header.nav.about'),   href: '/about' },
+  { label: t('layout.header.nav.menu'),    href: '/menu' },
+  { label: t('layout.header.nav.booking'), href: '/booking' },
+  { label: t('layout.header.nav.contact'), href: '/contact' },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -15,13 +16,13 @@ const currentPath = Astro.url.pathname;
 <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white transition-all duration-300">
   <!-- Top banner -->
   <div class="bg-brand-green text-center text-sm py-1 px-4">
-    Hệ thống Nhà hàng Bê thui Hà Nội - Quán nhậu sân vườn
+    {t('layout.header.banner')}
   </div>
 
   <div class="container flex items-center justify-between py-3">
     <!-- Logo -->
     <a href="/" class="flex-shrink-0">
-      <img src="/images/logo.png" alt="Bê Thui Hà Nội" class="h-16 w-auto" />
+      <Image src="/images/logo.png" alt={t('layout.header.logo_alt')} width={160} height={64} class="h-16 w-auto" />
     </a>
 
     <!-- Desktop nav -->

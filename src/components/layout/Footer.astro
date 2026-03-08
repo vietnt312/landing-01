@@ -1,11 +1,22 @@
 ---
+import { Image } from 'astro:assets';
+import { getText as t, getSiteConfig } from '@/lib/googleSheets';
+
+const config = await getSiteConfig();
+
+let mapSrc = config.mapEmbedUrl || 'https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi';
+
+// Ensure the URL has &output=embed to avoid "refuse to connect" errors
+if (mapSrc.includes('google.com') && !mapSrc.includes('output=embed') && !mapSrc.includes('google.com/maps/embed')) {
+  mapSrc += mapSrc.includes('?') ? '&output=embed' : '?output=embed';
+}
+
 const quickLinks = [
-  { label: 'Trang chủ',       href: '/' },
-  { label: 'Giới thiệu',      href: '/about' },
-  { label: 'Thực đơn',        href: '/menu' },
-  { label: 'Đặt bàn',         href: '/booking' },
-  { label: 'Tin tức',         href: '/news' },
-  { label: 'Liên hệ',         href: '/contact' },
+  { label: t('layout.header.nav.home'),    href: '/' },
+  { label: t('layout.header.nav.about'),   href: '/about' },
+  { label: t('layout.header.nav.menu'),    href: '/menu' },
+  { label: t('layout.header.nav.booking'), href: '/booking' },
+  { label: t('layout.header.nav.contact'), href: '/contact' },
 ];
 ---
 
@@ -14,47 +25,73 @@ const quickLinks = [
 
     <!-- Brand + contact -->
     <div>
-      <img src="/images/logo.png" alt="Bê Thui Hà Nội" class="h-16 mb-4" />
+      <Image src="/images/logo.png" alt={t('layout.header.logo_alt')} width={160} height={64} class="h-16 mb-4 w-auto" />
       <p class="text-sm leading-relaxed opacity-80 mb-4">
-        Hệ thống Nhà hàng Bê thui Hà Nội - Quán nhậu sân vườn chất lượng cao.
+        {t('layout.footer.brand_desc')}
       </p>
       <ul class="space-y-2 text-sm">
-        <li>
-          <a href="tel:0828662929" class="hover:text-brand-gold transition-colors">
-            📞 Hotline: 082.866.2929
-          </a>
-        </li>
-        <li>
-          <a href="mailto:bethuihanoi@gmail.com" class="hover:text-brand-gold transition-colors">
-            ✉️ bethuihanoi@gmail.com
-          </a>
-        </li>
-        <li>📍 28 Nguyễn Hữu Thọ, Định Công, Hà Nội</li>
+        {config.hotline && (
+          <li>
+            <a href={`tel:${config.hotline}`} class="hover:text-brand-gold transition-colors">
+              📞 Hotline: {config.hotline}
+            </a>
+          </li>
+        )}
+        {config.email && (
+          <li>
+            <a href={`mailto:${config.email}`} class="hover:text-brand-gold transition-colors">
+              ✉️ {config.email}
+            </a>
+          </li>
+        )}
+        {config.address && (
+          <li>📍 {config.address}</li>
+        )}
       </ul>
 
       <!-- Social links -->
       <div class="flex gap-4 mt-6">
-        <a href="#" aria-label="Facebook" class="hover:text-brand-gold transition-colors">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z"/>
-          </svg>
-        </a>
-        <a href="#" aria-label="TikTok" class="hover:text-brand-gold transition-colors">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z"/>
-          </svg>
-        </a>
-        <a href="#" aria-label="YouTube" class="hover:text-brand-gold transition-colors">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.4 5 12 5 12 5s-4.4 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9C6.8 19 12 19 12 19s4.4 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.5l5.4 2.5-5.4 2.5z"/>
-          </svg>
-        </a>
+        {config.facebook && (
+          <a href={config.facebook} aria-label="Facebook" class="hover:text-brand-gold transition-colors">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z"/>
+            </svg>
+          </a>
+        )}
+        {config.tiktok && (
+          <a href={config.tiktok} aria-label="TikTok" class="hover:text-brand-gold transition-colors">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z"/>
+            </svg>
+          </a>
+        )}
+        {config.youtube && (
+          <a href={config.youtube} aria-label="YouTube" class="hover:text-brand-gold transition-colors">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.4 5 12 5 12 5s-4.4 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9C6.8 19 12 19 12 19s4.4 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.5l5.4 2.5-5.4 2.5z"/>
+            </svg>
+          </a>
+        )}
+        {config.zalo && (
+          <a href={config.zalo} aria-label="Zalo" class="hover:text-brand-gold transition-colors">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V10h2v6zm4 0h-2v-3.5c0-.83-.67-1.5-1.5-1.5S10 11.67 10 12.5V16H8v-6h2v.93c.46-.6 1.17-1.43 2.5-1.43C14.43 9.5 15 10.84 15 12.5V16z"/>
+            </svg>
+          </a>
+        )}
+        {config.messenger && (
+          <a href={config.messenger} aria-label="Messenger" class="hover:text-brand-gold transition-colors">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.9 1.19 5.44 3.14 7.22.16.15.26.35.27.57l.05 1.78a.5.5 0 00.7.44l1.99-.88a.5.5 0 01.33-.03c1.03.28 2.12.43 3.25.43C17.64 21.23 22 17.1 22 11.7 22 6.13 17.64 2 12 2zm6 9.35l-2.9 4.6a1.5 1.5 0 01-2.16.4l-2.31-1.73a.6.6 0 00-.72 0L7.1 16.06c-.38.28-.87-.16-.63-.58l2.9-4.6a1.5 1.5 0 012.16-.4l2.31 1.73a.6.6 0 00.72 0l2.81-1.94c.38-.28.87.16.63.58z"/>
+            </svg>
+          </a>
+        )}
       </div>
     </div>
 
     <!-- Quick links -->
     <div>
-      <h3 class="font-bold text-brand-gold mb-4 uppercase tracking-wide text-sm">Liên kết nhanh</h3>
+      <h3 class="font-bold text-brand-gold mb-4 uppercase tracking-wide text-sm">{t('layout.footer.links_title')}</h3>
       <ul class="space-y-2 text-sm">
         {quickLinks.map(({ label, href }) => (
           <li>
@@ -68,19 +105,19 @@ const quickLinks = [
 
     <!-- Opening hours -->
     <div>
-      <h3 class="font-bold text-brand-gold mb-4 uppercase tracking-wide text-sm">Giờ mở cửa</h3>
+      <h3 class="font-bold text-brand-gold mb-4 uppercase tracking-wide text-sm">{t('layout.footer.hours_title')}</h3>
       <ul class="space-y-2 text-sm opacity-80">
-        <li>Thứ 2 – Thứ 6: 10:00 – 22:00</li>
-        <li>Thứ 7 – Chủ nhật: 09:00 – 23:00</li>
+        <li>{t('layout.footer.hours_weekday')}</li>
+        <li>{t('layout.footer.hours_weekend')}</li>
       </ul>
 
-      <h3 class="font-bold text-brand-gold mt-6 mb-4 uppercase tracking-wide text-sm">Bản đồ</h3>
+      <h3 class="font-bold text-brand-gold mt-6 mb-4 uppercase tracking-wide text-sm">{t('layout.footer.map_title')}</h3>
       <div class="rounded-xl overflow-hidden aspect-video">
         <iframe
-          src="https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi&output=embed"
+          src={mapSrc}
           class="w-full h-full border-0"
           loading="lazy"
-          title="Bản đồ nhà hàng"
+          title={t('layout.footer.map_title')}
         ></iframe>
       </div>
     </div>
@@ -88,6 +125,6 @@ const quickLinks = [
   </div>
 
   <div class="border-t border-white/10 py-4 text-center text-xs opacity-60">
-    © {new Date().getFullYear()} Bê Thui Hà Nội. All rights reserved.
+    {config.copyright ?? `© ${new Date().getFullYear()} Bê Thui Hà Nội. All rights reserved.`}
   </div>
 </footer>

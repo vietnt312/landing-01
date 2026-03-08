@@ -1,32 +1,34 @@
 ---
+import { getText as t } from '@/lib/googleSheets';
+
 const features = [
   {
-    icon: '🥩',
-    title: 'Thịt tươi mỗi ngày',
-    description: 'Nguyên liệu được tuyển chọn, nhập hàng mỗi ngày đảm bảo tươi ngon nhất.',
+    icon: t('sections.features.item1.icon'),
+    title: t('sections.features.item1.title'),
+    description: t('sections.features.item1.desc'),
   },
   {
-    icon: '📞',
-    title: 'Đặt bàn trực tuyến',
-    description: 'Đặt bàn nhanh chóng qua website hoặc hotline 24/7.',
+    icon: t('sections.features.item2.icon'),
+    title: t('sections.features.item2.title'),
+    description: t('sections.features.item2.desc'),
   },
   {
-    icon: '🌿',
-    title: 'Không gian sân vườn',
-    description: 'Không gian xanh mát, thoáng đãng, lý tưởng cho gia đình và nhóm bạn.',
+    icon: t('sections.features.item3.icon'),
+    title: t('sections.features.item3.title'),
+    description: t('sections.features.item3.desc'),
   },
   {
-    icon: '🚗',
-    title: 'Bãi đỗ xe rộng',
-    description: 'Bãi đỗ xe miễn phí, rộng rãi ngay tại nhà hàng.',
+    icon: t('sections.features.item4.icon'),
+    title: t('sections.features.item4.title'),
+    description: t('sections.features.item4.desc'),
   },
 ];
 ---
 
 <section id="features" class="py-16 bg-gray-50">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">Tại sao chọn chúng tôi</p>
-    <h2 class="section-title text-center">Điểm khác biệt của Bê Thui Hà Nội</h2>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">{t('sections.features.eyebrow')}</p>
+    <h2 class="section-title text-center">{t('sections.features.title')}</h2>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-10">
       {features.map((f) => (

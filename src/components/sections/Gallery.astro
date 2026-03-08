@@ -1,31 +1,153 @@
 ---
-import { getGalleryImages } from '@/lib/googleSheets';
+import { Image } from 'astro:assets';
+import { getGalleryImages, getText as t } from '@/lib/googleSheets';
 
-const images = await getGalleryImages();
+const images = getGalleryImages();
+const PAGE_SIZE = 8;
 ---
 
 <section id="gallery" class="py-16">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">Hình ảnh</p>
-    <h2 class="section-title">Không gian & món ăn</h2>
-    <p class="section-subtitle">Cảm nhận không gian nhà hàng qua từng bức ảnh</p>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">{t('sections.gallery.eyebrow')}</p>
+    <h2 class="section-title">{t('sections.gallery.title')}</h2>
+    <p class="section-subtitle">{t('sections.gallery.subtitle')}</p>
 
-    <div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+    <!-- Image grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10" id="gallery-grid">
       {images.map((img) => (
-        <a
-          href={img.src}
-          data-lightbox="gallery"
-          data-title={img.caption}
-          class="block overflow-hidden rounded-2xl group"
+        <button
+          data-item
+          data-src={img.src}
+          data-caption={img.caption ?? ''}
+          data-alt={img.alt}
+          class="relative overflow-hidden rounded-xl aspect-square group cursor-zoom-in text-left"
+          aria-label={img.caption ?? img.alt}
         >
-          <img
+          <Image
             src={img.src}
             alt={img.alt}
-            loading="lazy"
-            class="w-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-2xl"
+            width={600}
+            height={600}
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        </a>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent"></div>
+          {img.caption && (
+            <p class="absolute bottom-3 left-3 text-white font-bold text-sm uppercase tracking-wide drop-shadow">
+              {img.caption}
+            </p>
+          )}
+        </button>
       ))}
     </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-8" id="gallery-pagination"></div>
   </div>
 </section>
+
+<!-- Lightbox modal -->
+<div
+  id="gallery-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden"
+  role="dialog"
+  aria-modal="true"
+>
+  <button
+    id="gallery-modal-close"
+    class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors"
+    aria-label="Đóng"
+  >
+    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <figure class="flex flex-col items-center gap-3 px-4 max-w-[90vw] max-h-[90vh]">
+    <img
+      id="gallery-modal-img"
+      src=""
+      alt=""
+      class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+    />
+    <figcaption id="gallery-modal-caption" class="text-white text-sm font-semibold uppercase tracking-wide"></figcaption>
+  </figure>
+</div>
+
+<script is:inline define:vars={{ pageSize: PAGE_SIZE }}>
+  const allItems = Array.from(document.querySelectorAll('#gallery-grid [data-item]'));
+  const pagination = document.getElementById('gallery-pagination');
+
+  let currentPage = 1;
+
+  function renderPage() {
+    const totalPages = Math.ceil(allItems.length / pageSize);
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    allItems.forEach((item, i) => item.classList.toggle('hidden', i < start || i >= end));
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    if (!pagination) return;
+    pagination.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    const btnClass = 'px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200';
+    const activeClass = 'bg-brand-gold text-white border-brand-gold';
+    const inactiveClass = 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold';
+
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.className = `${btnClass} ${currentPage === 1 ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; renderPage(); });
+    pagination.appendChild(prev);
+
+    for (let p = 1; p <= totalPages; p++) {
+      const btn = document.createElement('button');
+      btn.textContent = String(p);
+      btn.className = `${btnClass} ${p === currentPage ? activeClass : inactiveClass}`;
+      btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+      pagination.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.className = `${btnClass} ${currentPage === totalPages ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; renderPage(); });
+    pagination.appendChild(next);
+  }
+
+  renderPage();
+
+  // Lightbox
+  const modal = document.getElementById('gallery-modal');
+  const modalImg = document.getElementById('gallery-modal-img');
+  const modalCaption = document.getElementById('gallery-modal-caption');
+  const modalClose = document.getElementById('gallery-modal-close');
+
+  function openModal(src, alt, caption) {
+    modalImg.src = src;
+    modalImg.alt = alt;
+    modalCaption.textContent = caption;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    modalImg.src = '';
+  }
+
+  document.getElementById('gallery-grid').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-src]');
+    if (btn) openModal(btn.dataset.src, btn.dataset.alt, btn.dataset.caption);
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+</script>

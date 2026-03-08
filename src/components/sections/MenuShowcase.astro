@@ -1,18 +1,19 @@
 ---
 import MenuCard from '@/components/ui/MenuCard.astro';
-import { getMenuItems } from '@/lib/googleSheets';
+import { getMenuItems, getText as t } from '@/lib/googleSheets';
 
-const items = await getMenuItems();
+const items = getMenuItems();
 
 // Derive unique categories
-const categories = ['Tất cả', ...new Set(items.map((i) => i.category).filter(Boolean))];
+const categories = [t('sections.menu.all_tab'), ...new Set(items.map((i) => i.category).filter(Boolean))];
+const PAGE_SIZE = 8;
 ---
 
 <section id="menu" class="py-16">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">Thực đơn</p>
-    <h2 class="section-title">Món ngon nổi bật</h2>
-    <p class="section-subtitle">Chọn từ thực đơn đa dạng, tươi ngon mỗi ngày</p>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">{t('sections.menu.eyebrow')}</p>
+    <h2 class="section-title">{t('sections.menu.title')}</h2>
+    <p class="section-subtitle">{t('sections.menu.subtitle')}</p>
 
     <!-- Category filter tabs -->
     <div class="flex flex-wrap gap-2 mb-8" id="menu-tabs">
@@ -38,32 +39,94 @@ const categories = ['Tất cả', ...new Set(items.map((i) => i.category).filter
       ))}
     </div>
 
-    <div class="text-center mt-10">
-      <a href="/menu" class="btn-outline">Xem toàn bộ thực đơn</a>
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-2 mt-8" id="menu-pagination"></div>
+
+    <div class="text-center mt-6">
+      <a href="/menu" class="btn-outline">{t('sections.menu.view_all')}</a>
     </div>
   </div>
 </section>
 
-<script>
-  const tabs = document.querySelectorAll<HTMLButtonElement>('#menu-tabs button');
-  const cards = document.querySelectorAll<HTMLElement>('#menu-grid [data-category]');
+<script is:inline define:vars={{ allTab: t('sections.menu.all_tab'), pageSize: PAGE_SIZE }}>
+  const tabs = document.querySelectorAll('#menu-tabs button');
+  const allCards = Array.from(document.querySelectorAll('#menu-grid [data-category]'));
+  const pagination = document.getElementById('menu-pagination');
+
+  let currentTab = allTab;
+  let currentPage = 1;
+
+  function getVisible() {
+    return allCards.filter(
+      (card) => currentTab === allTab || card.dataset.category === currentTab
+    );
+  }
+
+  function renderPage() {
+    const visible = getVisible();
+    const totalPages = Math.ceil(visible.length / pageSize);
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    allCards.forEach((card) => card.classList.add('hidden'));
+    visible.slice(start, end).forEach((card) => card.classList.remove('hidden'));
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    if (!pagination) return;
+    pagination.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    const btnClass =
+      'px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200';
+    const activeClass = 'bg-brand-gold text-white border-brand-gold';
+    const inactiveClass = 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold';
+
+    // Prev
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.className = `${btnClass} ${currentPage === 1 ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; renderPage(); });
+    pagination.appendChild(prev);
+
+    // Page numbers
+    for (let p = 1; p <= totalPages; p++) {
+      const btn = document.createElement('button');
+      btn.textContent = String(p);
+      btn.className = `${btnClass} ${p === currentPage ? activeClass : inactiveClass}`;
+      btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+      pagination.appendChild(btn);
+    }
+
+    // Next
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.className = `${btnClass} ${currentPage === totalPages ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; renderPage(); });
+    pagination.appendChild(next);
+  }
 
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
-      const selected = tab.dataset.category ?? 'Tất cả';
+      currentTab = tab.dataset.category ?? allTab;
+      currentPage = 1;
 
-      // Update tab styles
       tabs.forEach((t) => {
-        t.classList.toggle('bg-brand-gold', t.dataset.category === selected);
-        t.classList.toggle('text-white', t.dataset.category === selected);
-        t.classList.toggle('border-brand-gold', t.dataset.category === selected);
+        const active = t.dataset.category === currentTab;
+        t.classList.toggle('bg-brand-gold', active);
+        t.classList.toggle('text-white', active);
+        t.classList.toggle('border-brand-gold', active);
+        t.classList.toggle('border-gray-300', !active);
+        t.classList.toggle('text-gray-600', !active);
       });
 
-      // Filter cards
-      cards.forEach((card) => {
-        const show = selected === 'Tất cả' || card.dataset.category === selected;
-        card.classList.toggle('hidden', !show);
-      });
+      renderPage();
     });
   });
+
+  renderPage();
 </script>

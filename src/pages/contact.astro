@@ -1,12 +1,16 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getText as t, getSiteConfig } from '@/lib/googleSheets';
+
+const config = getSiteConfig();
+const mapSrc = config.mapEmbedUrl ?? 'https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi&output=embed';
 ---
 
 <BaseLayout title="Liên hệ - Bê Thui Hà Nội" description="Liên hệ với Nhà hàng Bê Thui Hà Nội">
 
   <div class="bg-brand-green text-white py-16 text-center">
-    <h1 class="text-4xl font-bold mb-2">Liên hệ</h1>
-    <p class="opacity-80">Chúng tôi luôn sẵn sàng phục vụ bạn</p>
+    <h1 class="text-4xl font-bold mb-2">{t('pages.contact.header_title')}</h1>
+    <p class="opacity-80">{t('pages.contact.header_subtitle')}</p>
   </div>
 
   <section class="py-16">
@@ -14,29 +18,29 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
       <!-- Contact info -->
       <div>
-        <h2 class="text-2xl font-bold text-brand-green mb-6">Thông tin liên hệ</h2>
+        <h2 class="text-2xl font-bold text-brand-green mb-6">{t('pages.contact.section_title')}</h2>
         <ul class="space-y-4 text-gray-700">
           <li class="flex gap-3 items-start">
             <span class="text-2xl">📞</span>
             <div>
-              <p class="font-medium">Hotline</p>
-              <a href="tel:0828662929" class="text-brand-gold hover:underline">082.866.2929</a>
+              <p class="font-medium">{t('pages.contact.hotline_label')}</p>
+              <a href={`tel:${config.hotline}`} class="text-brand-gold hover:underline">{config.hotline}</a>
             </div>
           </li>
           <li class="flex gap-3 items-start">
             <span class="text-2xl">✉️</span>
             <div>
-              <p class="font-medium">Email</p>
-              <a href="mailto:bethuihanoi@gmail.com" class="text-brand-gold hover:underline">
-                bethuihanoi@gmail.com
+              <p class="font-medium">{t('pages.contact.email_label')}</p>
+              <a href={`mailto:${config.email}`} class="text-brand-gold hover:underline">
+                {config.email}
               </a>
             </div>
           </li>
           <li class="flex gap-3 items-start">
             <span class="text-2xl">📍</span>
             <div>
-              <p class="font-medium">Địa chỉ</p>
-              <p>28 Nguyễn Hữu Thọ, Định Công, Hà Nội</p>
+              <p class="font-medium">{t('pages.contact.address_label')}</p>
+              <p>{config.address}</p>
             </div>
           </li>
         </ul>
@@ -45,10 +49,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       <!-- Map -->
       <div class="rounded-2xl overflow-hidden aspect-video md:aspect-auto">
         <iframe
-          src="https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi&output=embed"
+          src={mapSrc}
           class="w-full h-full min-h-[300px] border-0"
           loading="lazy"
-          title="Bản đồ nhà hàng"
+          title={t('pages.contact.map_title')}
         ></iframe>
       </div>
 

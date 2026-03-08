@@ -18,6 +18,13 @@ pnpm-debug.log*
 .env
 .env.local
 
+# Google Sheets data — downloaded at build time, not committed
+# text.csv is committed (UI copy); the others are gitignored
+data/menu.csv
+data/gallery.csv
+data/config.csv
+data/slides.csv
+
 # OS
 .DS_Store
 Thumbs.db

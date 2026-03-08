@@ -1,20 +1,16 @@
 export interface MenuItem {
   id: string;
   name: string;
+  slug: string;
   description: string;
   price: number;
   originalPrice?: number;
   category: string;
   image: string;
-}
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  thumbnail: string;
-  publishedAt: string;
+  imageAlt: string;
+  isAvailable: boolean;
+  isFeatured: boolean;
+  sortOrder: number;
 }
 
 export interface GalleryImage {
@@ -22,6 +18,19 @@ export interface GalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  group?: string;
+  sortOrder: number;
+  isFeatured: boolean;
+}
+
+export interface Slide {
+  id: string;
+  image: string;
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+  ctaHref: string;
+  sortOrder: number;
 }
 
 export interface SiteConfig {
@@ -33,4 +42,11 @@ export interface SiteConfig {
   facebook?: string;
   tiktok?: string;
   youtube?: string;
+  zalo?: string;
+  messenger?: string;
+  bookingUrl?: string;
+  mapEmbedUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  copyright?: string;
 }

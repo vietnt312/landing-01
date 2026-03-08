@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import type { MenuItem } from '@/types';
+import { getText as t } from '@/lib/googleSheets';
 
 interface Props {
   item: MenuItem;
@@ -23,15 +25,16 @@ const formattedOriginal = item.originalPrice
 >
   <!-- Image -->
   <div class="relative aspect-square overflow-hidden">
-    <img
+    <Image
       src={item.image || '/images/placeholder-food.jpg'}
       alt={item.name}
-      loading="lazy"
+      width={400}
+      height={400}
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
     />
     {formattedOriginal && (
       <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-        SALE
+        {t('ui.menu_card.sale_badge')}
       </span>
     )}
   </div>

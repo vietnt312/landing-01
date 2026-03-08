@@ -34,16 +34,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Download data CSVs from Google Sheets
+        run: |
+          mkdir -p data
+          curl -sL "${{ secrets.GOOGLE_SHEET_MENU_URL }}"    -o data/menu.csv
+          curl -sL "${{ secrets.GOOGLE_SHEET_GALLERY_URL }}" -o data/gallery.csv
+          curl -sL "${{ secrets.GOOGLE_SHEET_CONFIG_URL }}"  -o data/config.csv
+          curl -sL "${{ secrets.GOOGLE_SHEET_SLIDES_URL }}"  -o data/slides.csv
+          curl -sL "${{ secrets.GOOGLE_SHEET_TEXT_URL }}"  -o data/text.csv
+
       - name: Build
         run: npm run build
         env:
-          # Google Sheets CSV export URLs — set these as GitHub Actions secrets
-          GOOGLE_SHEET_MENU_URL:    ${{ secrets.GOOGLE_SHEET_MENU_URL }}
-          GOOGLE_SHEET_BLOG_URL:    ${{ secrets.GOOGLE_SHEET_BLOG_URL }}
-          GOOGLE_SHEET_GALLERY_URL: ${{ secrets.GOOGLE_SHEET_GALLERY_URL }}
-          GOOGLE_SHEET_CONFIG_URL:  ${{ secrets.GOOGLE_SHEET_CONFIG_URL }}
-          # Optional: booking form endpoint
-          BOOKING_FORM_ENDPOINT:    ${{ secrets.BOOKING_FORM_ENDPOINT }}
+          BOOKING_FORM_ENDPOINT: ${{ secrets.BOOKING_FORM_ENDPOINT }}
+          BOOKING_FIELD_NAME:    ${{ secrets.BOOKING_FIELD_NAME }}
+          BOOKING_FIELD_PHONE:   ${{ secrets.BOOKING_FIELD_PHONE }}
+          BOOKING_FIELD_DATE:    ${{ secrets.BOOKING_FIELD_DATE }}
+          BOOKING_FIELD_TIME:    ${{ secrets.BOOKING_FIELD_TIME }}
+          BOOKING_FIELD_GUESTS:  ${{ secrets.BOOKING_FIELD_GUESTS }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -55,7 +63,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: 'github-pages'
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
