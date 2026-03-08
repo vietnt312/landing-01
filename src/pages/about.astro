@@ -1,25 +1,23 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getText as t } from '@/lib/googleSheets';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getText as t } from "@/lib/googleSheets";
 ---
 
 <BaseLayout title="Giới thiệu - Bê Thui Hà Nội" description="Câu chuyện về Nhà hàng Bê Thui Hà Nội">
-
   <div class="bg-brand-green text-white py-16 text-center">
-    <h1 class="text-4xl font-bold mb-2">{t('pages.about.header_title')}</h1>
-    <p class="opacity-80">{t('pages.about.header_subtitle')}</p>
+    <h1 class="text-4xl font-bold mb-2">{t("pages.about.header_title")}</h1>
+    <p class="opacity-80">{t("pages.about.header_subtitle")}</p>
   </div>
 
   <section class="py-16">
     <div class="container max-w-3xl prose prose-green mx-auto">
-      <h2>{t('pages.about.section_title')}</h2>
+      <h2>{t("pages.about.section_title")}</h2>
       <p>
-        {t('pages.about.body1')}
+        {t("pages.about.body1")}
       </p>
       <p>
-        {t('pages.about.body2')}
+        {t("pages.about.body2")}
       </p>
     </div>
   </section>
-
 </BaseLayout>

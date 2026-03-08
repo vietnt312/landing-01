@@ -1,65 +1,70 @@
 ---
-import MenuCard from '@/components/ui/MenuCard.astro';
-import { getMenuItems, getText as t } from '@/lib/googleSheets';
+import MenuCard from "@/components/ui/MenuCard.astro";
+import { getMenuItems, getText as t } from "@/lib/googleSheets";
+
+const base = import.meta.env.BASE_URL;
 
 const items = getMenuItems();
 
 // Derive unique categories
-const categories = [t('sections.menu.all_tab'), ...new Set(items.map((i) => i.category).filter(Boolean))];
+const categories = [
+  t("sections.menu.all_tab"),
+  ...new Set(items.map((i) => i.category).filter(Boolean)),
+];
 const PAGE_SIZE = 8;
 ---
 
 <section id="menu" class="py-16">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">{t('sections.menu.eyebrow')}</p>
-    <h2 class="section-title">{t('sections.menu.title')}</h2>
-    <p class="section-subtitle">{t('sections.menu.subtitle')}</p>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">
+      {t("sections.menu.eyebrow")}
+    </p>
+    <h2 class="section-title">{t("sections.menu.title")}</h2>
+    <p class="section-subtitle">{t("sections.menu.subtitle")}</p>
 
     <!-- Category filter tabs -->
     <div class="flex flex-wrap gap-2 mb-8" id="menu-tabs">
-      {categories.map((cat, i) => (
-        <button
-          data-category={cat}
-          class:list={[
-            'px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-200',
-            i === 0
-              ? 'bg-brand-gold text-white border-brand-gold'
-              : 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold',
-          ]}
-        >
-          {cat}
-        </button>
-      ))}
+      {
+        categories.map((cat, i) => (
+          <button
+            data-category={cat}
+            class:list={[
+              "px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-200",
+              i === 0
+                ? "bg-brand-gold text-white border-brand-gold"
+                : "border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold",
+            ]}
+          >
+            {cat}
+          </button>
+        ))
+      }
     </div>
 
     <!-- Items grid -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="menu-grid">
-      {items.map((item) => (
-        <MenuCard item={item} />
-      ))}
+      {items.map((item) => <MenuCard item={item} />)}
     </div>
 
     <!-- Pagination -->
     <div class="flex items-center justify-center gap-2 mt-8" id="menu-pagination"></div>
 
     <div class="text-center mt-6">
-      <a href="/menu" class="btn-outline">{t('sections.menu.view_all')}</a>
+      <a href={`${base}/menu`} class="btn-outline">{t("sections.menu.view_all")}</a>
     </div>
   </div>
 </section>
 
-<script is:inline define:vars={{ allTab: t('sections.menu.all_tab'), pageSize: PAGE_SIZE }}>
-  const tabs = document.querySelectorAll('#menu-tabs button');
-  const allCards = Array.from(document.querySelectorAll('#menu-grid [data-category]'));
-  const pagination = document.getElementById('menu-pagination');
+<script is:inline define:vars={{ allTab: t("sections.menu.all_tab"), pageSize: PAGE_SIZE }}>
+  const tabs = document.querySelectorAll("#menu-tabs button");
+  const allCards = Array.from(document.querySelectorAll("#menu-grid [data-category]"));
+  const pagination = document.getElementById("menu-pagination");
 
   let currentTab = allTab;
   let currentPage = 1;
 
   function getVisible() {
-    return allCards.filter(
-      (card) => currentTab === allTab || card.dataset.category === currentTab
-    );
+    return allCards.filter((card) => currentTab === allTab || card.dataset.category === currentTab);
   }
 
   function renderPage() {
@@ -68,60 +73,70 @@ const PAGE_SIZE = 8;
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
 
-    allCards.forEach((card) => card.classList.add('hidden'));
-    visible.slice(start, end).forEach((card) => card.classList.remove('hidden'));
+    allCards.forEach((card) => card.classList.add("hidden"));
+    visible.slice(start, end).forEach((card) => card.classList.remove("hidden"));
 
     renderPagination(totalPages);
   }
 
   function renderPagination(totalPages) {
     if (!pagination) return;
-    pagination.innerHTML = '';
+    pagination.innerHTML = "";
     if (totalPages <= 1) return;
 
     const btnClass =
-      'px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200';
-    const activeClass = 'bg-brand-gold text-white border-brand-gold';
-    const inactiveClass = 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold';
+      "px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200";
+    const activeClass = "bg-brand-gold text-white border-brand-gold";
+    const inactiveClass =
+      "border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold";
 
     // Prev
-    const prev = document.createElement('button');
-    prev.textContent = '‹';
-    prev.className = `${btnClass} ${currentPage === 1 ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    const prev = document.createElement("button");
+    prev.textContent = "‹";
+    prev.className = `${btnClass} ${currentPage === 1 ? "opacity-40 cursor-default " + inactiveClass : inactiveClass}`;
     prev.disabled = currentPage === 1;
-    prev.addEventListener('click', () => { currentPage--; renderPage(); });
+    prev.addEventListener("click", () => {
+      currentPage--;
+      renderPage();
+    });
     pagination.appendChild(prev);
 
     // Page numbers
     for (let p = 1; p <= totalPages; p++) {
-      const btn = document.createElement('button');
+      const btn = document.createElement("button");
       btn.textContent = String(p);
       btn.className = `${btnClass} ${p === currentPage ? activeClass : inactiveClass}`;
-      btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+      btn.addEventListener("click", () => {
+        currentPage = p;
+        renderPage();
+      });
       pagination.appendChild(btn);
     }
 
     // Next
-    const next = document.createElement('button');
-    next.textContent = '›';
-    next.className = `${btnClass} ${currentPage === totalPages ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    const next = document.createElement("button");
+    next.textContent = "›";
+    next.className = `${btnClass} ${currentPage === totalPages ? "opacity-40 cursor-default " + inactiveClass : inactiveClass}`;
     next.disabled = currentPage === totalPages;
-    next.addEventListener('click', () => { currentPage++; renderPage(); });
+    next.addEventListener("click", () => {
+      currentPage++;
+      renderPage();
+    });
     pagination.appendChild(next);
   }
 
   tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
+    tab.addEventListener("click", () => {
       currentTab = tab.dataset.category ?? allTab;
       currentPage = 1;
 
       tabs.forEach((t) => {
         const active = t.dataset.category === currentTab;
-        t.classList.toggle('bg-brand-gold', active);
-        t.classList.toggle('text-white', active);
-        t.classList.toggle('border-brand-gold', active);
-        t.classList.toggle('border-gray-300', !active);
-        t.classList.toggle('text-gray-600', !active);
+        t.classList.toggle("bg-brand-gold", active);
+        t.classList.toggle("text-white", active);
+        t.classList.toggle("border-brand-gold", active);
+        t.classList.toggle("border-gray-300", !active);
+        t.classList.toggle("text-gray-600", !active);
       });
 
       renderPage();

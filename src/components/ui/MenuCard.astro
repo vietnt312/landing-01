@@ -1,7 +1,8 @@
 ---
-import { Image } from 'astro:assets';
-import type { MenuItem } from '@/types';
-import { getText as t } from '@/lib/googleSheets';
+import { Image } from "astro:assets";
+import type { MenuItem } from "@/types";
+import { getText as t } from "@/lib/googleSheets";
+import { imgSrc } from "@/lib/utils";
 
 interface Props {
   item: MenuItem;
@@ -9,13 +10,16 @@ interface Props {
 
 const { item } = Astro.props;
 
-const formattedPrice = new Intl.NumberFormat('vi-VN', {
-  style: 'currency',
-  currency: 'VND',
+const formattedPrice = new Intl.NumberFormat("vi-VN", {
+  style: "currency",
+  currency: "VND",
 }).format(item.price);
 
 const formattedOriginal = item.originalPrice
-  ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.originalPrice)
+  ? new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(item.originalPrice)
   : null;
 ---
 
@@ -26,30 +30,33 @@ const formattedOriginal = item.originalPrice
   <!-- Image -->
   <div class="relative aspect-square overflow-hidden">
     <Image
-      src={item.image || '/images/placeholder-food.jpg'}
+      src={imgSrc(item.image)}
       alt={item.name}
       width={400}
       height={400}
+      loading="lazy"
       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
     />
-    {formattedOriginal && (
-      <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-        {t('ui.menu_card.sale_badge')}
-      </span>
-    )}
+    {
+      formattedOriginal && (
+        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          {t("ui.menu_card.sale_badge")}
+        </span>
+      )
+    }
   </div>
 
   <!-- Info -->
   <div class="p-4">
     <h3 class="font-semibold text-sm mb-1 line-clamp-2">{item.name}</h3>
-    {item.description && (
-      <p class="text-gray-500 text-xs mb-2 line-clamp-2">{item.description}</p>
-    )}
+    {item.description && <p class="text-gray-500 text-xs mb-2 line-clamp-2">{item.description}</p>}
     <div class="flex items-center gap-2">
       <span class="text-brand-gold font-bold">{formattedPrice}</span>
-      {formattedOriginal && (
-        <span class="text-gray-400 text-xs line-through">{formattedOriginal}</span>
-      )}
+      {
+        formattedOriginal && (
+          <span class="text-gray-400 text-xs line-through">{formattedOriginal}</span>
+        )
+      }
     </div>
   </div>
 </article>

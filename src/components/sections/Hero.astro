@@ -1,76 +1,94 @@
 ---
-import { getSlides } from '@/lib/googleSheets';
+import { getSlides } from "@/lib/googleSheets";
+import { imgSrc } from "@/lib/utils";
 
 const slides = getSlides();
 ---
 
 <section id="hero" class="relative w-full overflow-hidden">
-
   <!-- Slides -->
   <div id="slider-track" class="relative">
-    {slides.map((slide, i) => (
-      <div
-        id={`slide-${i}`}
-        class:list={[
-          'slide absolute inset-0 min-h-[560px] md:min-h-[680px] bg-cover bg-center flex items-center',
-          'transition-opacity duration-700',
-          i === 0 ? 'opacity-100 relative' : 'opacity-0 pointer-events-none',
-        ]}
-        style={`background-image: url('${slide.image}')`}
-        aria-hidden={i !== 0}
-      >
-        <!-- Dark overlay -->
-        <div class="absolute inset-0 bg-black/50"></div>
+    {
+      slides.map((slide, i) => (
+        <div
+          id={`slide-${i}`}
+          class:list={[
+            "slide absolute inset-0 min-h-[560px] md:min-h-[680px] bg-cover bg-center flex items-center",
+            "transition-opacity duration-700",
+            i === 0 ? "opacity-100 relative" : "opacity-0 pointer-events-none",
+          ]}
+          style={`background-image: url('${imgSrc(slide.image)}')`}
+          aria-hidden={i !== 0}
+        >
+          {/* dark overlay */}
+          <div class="absolute inset-0 bg-black/50" />
 
-        <div class="container relative z-10 text-white">
-          <div class="max-w-lg bg-black/60 rounded-2xl p-8">
-            <h1 class="text-4xl md:text-5xl font-bold mb-3">{slide.title}</h1>
-            <p class="text-lg mb-6 opacity-90">{slide.subtitle}</p>
-            <a href={slide.ctaHref} class="btn-primary">{slide.ctaLabel}</a>
+          <div class="container relative z-10 text-white">
+            <div class="max-w-lg bg-black/60 rounded-2xl p-8">
+              <h1 class="text-4xl md:text-5xl font-bold mb-3">{slide.title}</h1>
+              <p class="text-lg mb-6 opacity-90">{slide.subtitle}</p>
+              <a href={slide.ctaHref} class="btn-primary">
+                {slide.ctaLabel}
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    ))}
+      ))
+    }
   </div>
 
   <!-- Prev / Next arrows -->
-  {slides.length > 1 && (
-    <>
-      <button
-        id="slider-prev"
-        aria-label="Slide trước"
-        class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
+  {
+    slides.length > 1 && (
+      <>
+        <button
+          id="slider-prev"
+          aria-label="Slide trước"
+          class="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-      <button
-        id="slider-next"
-        aria-label="Slide tiếp theo"
-        class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+        <button
+          id="slider-next"
+          aria-label="Slide tiếp theo"
+          class="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
-      <!-- Dot indicators -->
-      <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        {slides.map((_, i) => (
-          <button
-            class:list={[
-              'dot w-3 h-3 rounded-full transition-colors',
-              i === 0 ? 'bg-brand-gold' : 'bg-white/50 hover:bg-white/80',
-            ]}
-            data-index={i}
-            aria-label={`Slide ${i + 1}`}
-          />
-        ))}
-      </div>
-    </>
-  )}
+        {/* <!-- Dot indicators --> */}
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {slides.map((_, i) => (
+            <button
+              class:list={[
+                "dot w-3 h-3 rounded-full transition-colors",
+                i === 0 ? "bg-brand-gold" : "bg-white/50 hover:bg-white/80",
+              ]}
+              data-index={i}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </>
+    )
+  }
 </section>
 
 <script is:inline define:vars={{ total: slides.length }}>
@@ -80,21 +98,21 @@ const slides = getSlides();
     let current = 0;
     let timer = null;
 
-    const slideEls = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
+    const slideEls = document.querySelectorAll(".slide");
+    const dots = document.querySelectorAll(".dot");
 
     function goTo(index) {
-      slideEls[current].classList.replace('opacity-100', 'opacity-0');
-      slideEls[current].classList.add('pointer-events-none');
-      slideEls[current].setAttribute('aria-hidden', 'true');
-      dots[current].classList.replace('bg-brand-gold', 'bg-white/50');
+      slideEls[current].classList.replace("opacity-100", "opacity-0");
+      slideEls[current].classList.add("pointer-events-none");
+      slideEls[current].setAttribute("aria-hidden", "true");
+      dots[current].classList.replace("bg-brand-gold", "bg-white/50");
 
       current = (index + total) % total;
 
-      slideEls[current].classList.replace('opacity-0', 'opacity-100');
-      slideEls[current].classList.remove('pointer-events-none');
-      slideEls[current].setAttribute('aria-hidden', 'false');
-      dots[current].classList.replace('bg-white/50', 'bg-brand-gold');
+      slideEls[current].classList.replace("opacity-0", "opacity-100");
+      slideEls[current].classList.remove("pointer-events-none");
+      slideEls[current].setAttribute("aria-hidden", "false");
+      dots[current].classList.replace("bg-white/50", "bg-brand-gold");
     }
 
     function startAutoPlay() {
@@ -106,18 +124,18 @@ const slides = getSlides();
       startAutoPlay();
     }
 
-    document.getElementById('slider-prev')?.addEventListener('click', () => {
+    document.getElementById("slider-prev")?.addEventListener("click", () => {
       goTo(current - 1);
       resetAutoPlay();
     });
 
-    document.getElementById('slider-next')?.addEventListener('click', () => {
+    document.getElementById("slider-next")?.addEventListener("click", () => {
       goTo(current + 1);
       resetAutoPlay();
     });
 
     dots.forEach((dot) => {
-      dot.addEventListener('click', () => {
+      dot.addEventListener("click", () => {
         goTo(Number(dot.dataset.index));
         resetAutoPlay();
       });

@@ -1,23 +1,25 @@
 ---
-import { getText as t } from '@/lib/googleSheets';
+import { getText as t } from "@/lib/googleSheets";
 
 // Google Form base URL (e.g. https://docs.google.com/forms/d/e/FORM_ID/viewform)
 // Field IDs: find them by opening your Google Form, right-clicking each input → Inspect,
 // look for name="entry.XXXXXXXXX" — set each in .env / GitHub Secrets.
-const FORM_URL      = import.meta.env.BOOKING_FORM_ENDPOINT ?? '';
-const FIELD_NAME    = import.meta.env.BOOKING_FIELD_NAME    ?? '';
-const FIELD_PHONE   = import.meta.env.BOOKING_FIELD_PHONE   ?? '';
-const FIELD_DATE    = import.meta.env.BOOKING_FIELD_DATE    ?? '';
-const FIELD_TIME    = import.meta.env.BOOKING_FIELD_TIME    ?? '';
-const FIELD_GUESTS  = import.meta.env.BOOKING_FIELD_GUESTS  ?? '';
+const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
+const FIELD_NAME = import.meta.env.BOOKING_FIELD_NAME ?? "";
+const FIELD_PHONE = import.meta.env.BOOKING_FIELD_PHONE ?? "";
+const FIELD_DATE = import.meta.env.BOOKING_FIELD_DATE ?? "";
+const FIELD_TIME = import.meta.env.BOOKING_FIELD_TIME ?? "";
+const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
 ---
 
 <section id="booking" class="py-16 bg-brand-green text-white">
   <div class="container max-w-2xl">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">{t('sections.booking.eyebrow')}</p>
-    <h2 class="text-3xl font-bold text-center mb-2">{t('sections.booking.title')}</h2>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">
+      {t("sections.booking.eyebrow")}
+    </p>
+    <h2 class="text-3xl font-bold text-center mb-2">{t("sections.booking.title")}</h2>
     <p class="text-center opacity-70 mb-8 text-sm">
-      {t('sections.booking.subtitle')}
+      {t("sections.booking.subtitle")}
     </p>
 
     <form
@@ -25,31 +27,37 @@ const FIELD_GUESTS  = import.meta.env.BOOKING_FIELD_GUESTS  ?? '';
       class="bg-white/10 backdrop-blur rounded-2xl p-8 grid grid-cols-1 sm:grid-cols-2 gap-5"
     >
       <div class="flex flex-col gap-1">
-        <label for="booking-name" class="text-sm font-medium">{t('sections.booking.form.name_label')}</label>
+        <label for="booking-name" class="text-sm font-medium"
+          >{t("sections.booking.form.name_label")}</label
+        >
         <input
           id="booking-name"
           name="name"
           type="text"
           required
-          placeholder={t('sections.booking.form.name_placeholder')}
+          placeholder={t("sections.booking.form.name_placeholder")}
           class="rounded-xl px-4 py-3 bg-white/20 placeholder:text-white/50 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="booking-phone" class="text-sm font-medium">{t('sections.booking.form.phone_label')}</label>
+        <label for="booking-phone" class="text-sm font-medium"
+          >{t("sections.booking.form.phone_label")}</label
+        >
         <input
           id="booking-phone"
           name="phone"
           type="tel"
           required
-          placeholder={t('sections.booking.form.phone_placeholder')}
+          placeholder={t("sections.booking.form.phone_placeholder")}
           class="rounded-xl px-4 py-3 bg-white/20 placeholder:text-white/50 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="booking-date" class="text-sm font-medium">{t('sections.booking.form.date_label')}</label>
+        <label for="booking-date" class="text-sm font-medium"
+          >{t("sections.booking.form.date_label")}</label
+        >
         <input
           id="booking-date"
           name="date"
@@ -60,7 +68,9 @@ const FIELD_GUESTS  = import.meta.env.BOOKING_FIELD_GUESTS  ?? '';
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="booking-time" class="text-sm font-medium">{t('sections.booking.form.time_label')}</label>
+        <label for="booking-time" class="text-sm font-medium"
+          >{t("sections.booking.form.time_label")}</label
+        >
         <input
           id="booking-time"
           name="time"
@@ -71,47 +81,56 @@ const FIELD_GUESTS  = import.meta.env.BOOKING_FIELD_GUESTS  ?? '';
       </div>
 
       <div class="flex flex-col gap-1 sm:col-span-2">
-        <label for="booking-guests" class="text-sm font-medium">{t('sections.booking.form.guests_label')}</label>
+        <label for="booking-guests" class="text-sm font-medium"
+          >{t("sections.booking.form.guests_label")}</label
+        >
         <select
           id="booking-guests"
           name="guests"
           required
           class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         >
-          {[1,2,3,4,5,6,7,8,9,'10+'].map((n) => (
-            <option value={String(n)} class="text-black">{n} khách</option>
-          ))}
+          {
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, "10+"].map((n) => (
+              <option value={String(n)} class="text-black">
+                {n} khách
+              </option>
+            ))
+          }
         </select>
       </div>
 
       <div class="sm:col-span-2">
         <button type="submit" class="w-full btn-primary justify-center text-center py-4">
-          {t('sections.booking.form.submit')}
+          {t("sections.booking.form.submit")}
         </button>
       </div>
     </form>
   </div>
 </section>
 
-<script is:inline define:vars={{ FORM_URL, FIELD_NAME, FIELD_PHONE, FIELD_DATE, FIELD_TIME, FIELD_GUESTS }}>
-  document.getElementById('booking-form').addEventListener('submit', (e) => {
+<script
+  is:inline
+  define:vars={{ FORM_URL, FIELD_NAME, FIELD_PHONE, FIELD_DATE, FIELD_TIME, FIELD_GUESTS }}
+>
+  document.getElementById("booking-form").addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const name   = document.getElementById('booking-name').value;
-    const phone  = document.getElementById('booking-phone').value;
-    const date   = document.getElementById('booking-date').value;
-    const time   = document.getElementById('booking-time').value;
-    const guests = document.getElementById('booking-guests').value;
+    const name = document.getElementById("booking-name").value;
+    const phone = document.getElementById("booking-phone").value;
+    const date = document.getElementById("booking-date").value;
+    const time = document.getElementById("booking-time").value;
+    const guests = document.getElementById("booking-guests").value;
 
     if (!FORM_URL) return;
 
     const params = new URLSearchParams();
-    if (FIELD_NAME)   params.set(FIELD_NAME,   name);
-    if (FIELD_PHONE)  params.set(FIELD_PHONE,  phone);
-    if (FIELD_DATE)   params.set(FIELD_DATE,   date);
-    if (FIELD_TIME)   params.set(FIELD_TIME,   time);
+    if (FIELD_NAME) params.set(FIELD_NAME, name);
+    if (FIELD_PHONE) params.set(FIELD_PHONE, phone);
+    if (FIELD_DATE) params.set(FIELD_DATE, date);
+    if (FIELD_TIME) params.set(FIELD_TIME, time);
     if (FIELD_GUESTS) params.set(FIELD_GUESTS, guests);
 
-    window.open(`${FORM_URL}?${params.toString()}`, '_blank', 'noopener');
+    window.open(`${FORM_URL}?${params.toString()}`, "_blank", "noopener");
   });
 </script>

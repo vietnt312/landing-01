@@ -1,43 +1,47 @@
 ---
-import { getText as t } from '@/lib/googleSheets';
+import { getText as t } from "@/lib/googleSheets";
 
 const features = [
   {
-    icon: t('sections.features.item1.icon'),
-    title: t('sections.features.item1.title'),
-    description: t('sections.features.item1.desc'),
+    icon: t("sections.features.item1.icon"),
+    title: t("sections.features.item1.title"),
+    description: t("sections.features.item1.desc"),
   },
   {
-    icon: t('sections.features.item2.icon'),
-    title: t('sections.features.item2.title'),
-    description: t('sections.features.item2.desc'),
+    icon: t("sections.features.item2.icon"),
+    title: t("sections.features.item2.title"),
+    description: t("sections.features.item2.desc"),
   },
   {
-    icon: t('sections.features.item3.icon'),
-    title: t('sections.features.item3.title'),
-    description: t('sections.features.item3.desc'),
+    icon: t("sections.features.item3.icon"),
+    title: t("sections.features.item3.title"),
+    description: t("sections.features.item3.desc"),
   },
   {
-    icon: t('sections.features.item4.icon'),
-    title: t('sections.features.item4.title'),
-    description: t('sections.features.item4.desc'),
+    icon: t("sections.features.item4.icon"),
+    title: t("sections.features.item4.title"),
+    description: t("sections.features.item4.desc"),
   },
 ];
 ---
 
 <section id="features" class="py-16 bg-gray-50">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">{t('sections.features.eyebrow')}</p>
-    <h2 class="section-title text-center">{t('sections.features.title')}</h2>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">
+      {t("sections.features.eyebrow")}
+    </p>
+    <h2 class="section-title text-center">{t("sections.features.title")}</h2>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-10">
-      {features.map((f) => (
-        <div class="flex flex-col items-center text-center">
-          <span class="text-5xl mb-4">{f.icon}</span>
-          <h3 class="font-bold text-brand-green mb-2">{f.title}</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">{f.description}</p>
-        </div>
-      ))}
+      {
+        features.map((f) => (
+          <div class="flex flex-col items-center text-center">
+            <span class="text-5xl mb-4">{f.icon}</span>
+            <h3 class="font-bold text-brand-green mb-2">{f.title}</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">{f.description}</p>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>

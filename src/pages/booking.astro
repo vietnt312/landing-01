@@ -1,16 +1,14 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import BookingSection from '@/components/sections/Booking.astro';
-import { getText as t } from '@/lib/googleSheets';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import BookingSection from "@/components/sections/Booking.astro";
+import { getText as t } from "@/lib/googleSheets";
 ---
 
 <BaseLayout title="Đặt bàn - Bê Thui Hà Nội" description="Đặt bàn tại Nhà hàng Bê Thui Hà Nội">
-
   <div class="bg-brand-green text-white py-16 text-center">
-    <h1 class="text-4xl font-bold mb-2">{t('pages.booking.header_title')}</h1>
-    <p class="opacity-80">{t('pages.booking.header_subtitle')}</p>
+    <h1 class="text-4xl font-bold mb-2">{t("pages.booking.header_title")}</h1>
+    <p class="opacity-80">{t("pages.booking.header_subtitle")}</p>
   </div>
 
   <BookingSection />
-
 </BaseLayout>

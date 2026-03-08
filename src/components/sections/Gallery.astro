@@ -1,6 +1,7 @@
 ---
-import { Image } from 'astro:assets';
-import { getGalleryImages, getText as t } from '@/lib/googleSheets';
+import { Image } from "astro:assets";
+import { getGalleryImages, getText as t } from "@/lib/googleSheets";
+import { imgSrc } from "@/lib/utils";
 
 const images = getGalleryImages();
 const PAGE_SIZE = 8;
@@ -8,36 +9,41 @@ const PAGE_SIZE = 8;
 
 <section id="gallery" class="py-16">
   <div class="container">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">{t('sections.gallery.eyebrow')}</p>
-    <h2 class="section-title">{t('sections.gallery.title')}</h2>
-    <p class="section-subtitle">{t('sections.gallery.subtitle')}</p>
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">
+      {t("sections.gallery.eyebrow")}
+    </p>
+    <h2 class="section-title">{t("sections.gallery.title")}</h2>
+    <p class="section-subtitle">{t("sections.gallery.subtitle")}</p>
 
     <!-- Image grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10" id="gallery-grid">
-      {images.map((img) => (
-        <button
-          data-item
-          data-src={img.src}
-          data-caption={img.caption ?? ''}
-          data-alt={img.alt}
-          class="relative overflow-hidden rounded-xl aspect-square group cursor-zoom-in text-left"
-          aria-label={img.caption ?? img.alt}
-        >
-          <Image
-            src={img.src}
-            alt={img.alt}
-            width={600}
-            height={600}
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent"></div>
-          {img.caption && (
-            <p class="absolute bottom-3 left-3 text-white font-bold text-sm uppercase tracking-wide drop-shadow">
-              {img.caption}
-            </p>
-          )}
-        </button>
-      ))}
+      {
+        images.map((img) => (
+          <button
+            data-item
+            data-src={img.src}
+            data-caption={img.caption ?? ""}
+            data-alt={img.alt}
+            class="relative overflow-hidden rounded-xl aspect-square group cursor-zoom-in text-left"
+            aria-label={img.caption ?? img.alt}
+          >
+            <Image
+              src={imgSrc(img.src)}
+              alt={img.alt}
+              width={600}
+              height={600}
+              loading="lazy"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+            {img.caption && (
+              <p class="absolute bottom-3 left-3 text-white font-bold text-sm uppercase tracking-wide drop-shadow">
+                {img.caption}
+              </p>
+            )}
+          </button>
+        ))
+      }
     </div>
 
     <!-- Pagination -->
@@ -58,7 +64,7 @@ const PAGE_SIZE = 8;
     aria-label="Đóng"
   >
     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
   </button>
 
@@ -69,13 +75,17 @@ const PAGE_SIZE = 8;
       alt=""
       class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
     />
-    <figcaption id="gallery-modal-caption" class="text-white text-sm font-semibold uppercase tracking-wide"></figcaption>
+    <figcaption
+      id="gallery-modal-caption"
+      class="text-white text-sm font-semibold uppercase tracking-wide"
+    >
+    </figcaption>
   </figure>
 </div>
 
 <script is:inline define:vars={{ pageSize: PAGE_SIZE }}>
-  const allItems = Array.from(document.querySelectorAll('#gallery-grid [data-item]'));
-  const pagination = document.getElementById('gallery-pagination');
+  const allItems = Array.from(document.querySelectorAll("#gallery-grid [data-item]"));
+  const pagination = document.getElementById("gallery-pagination");
 
   let currentPage = 1;
 
@@ -84,70 +94,85 @@ const PAGE_SIZE = 8;
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
 
-    allItems.forEach((item, i) => item.classList.toggle('hidden', i < start || i >= end));
+    allItems.forEach((item, i) => item.classList.toggle("hidden", i < start || i >= end));
     renderPagination(totalPages);
   }
 
   function renderPagination(totalPages) {
     if (!pagination) return;
-    pagination.innerHTML = '';
+    pagination.innerHTML = "";
     if (totalPages <= 1) return;
 
-    const btnClass = 'px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200';
-    const activeClass = 'bg-brand-gold text-white border-brand-gold';
-    const inactiveClass = 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold';
+    const btnClass =
+      "px-3 py-1.5 rounded-md text-sm font-medium border transition-colors duration-200";
+    const activeClass = "bg-brand-gold text-white border-brand-gold";
+    const inactiveClass =
+      "border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold";
 
-    const prev = document.createElement('button');
-    prev.textContent = '‹';
-    prev.className = `${btnClass} ${currentPage === 1 ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    const prev = document.createElement("button");
+    prev.textContent = "‹";
+    prev.className = `${btnClass} ${currentPage === 1 ? "opacity-40 cursor-default " + inactiveClass : inactiveClass}`;
     prev.disabled = currentPage === 1;
-    prev.addEventListener('click', () => { currentPage--; renderPage(); });
+    prev.addEventListener("click", () => {
+      currentPage--;
+      renderPage();
+    });
     pagination.appendChild(prev);
 
     for (let p = 1; p <= totalPages; p++) {
-      const btn = document.createElement('button');
+      const btn = document.createElement("button");
       btn.textContent = String(p);
       btn.className = `${btnClass} ${p === currentPage ? activeClass : inactiveClass}`;
-      btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+      btn.addEventListener("click", () => {
+        currentPage = p;
+        renderPage();
+      });
       pagination.appendChild(btn);
     }
 
-    const next = document.createElement('button');
-    next.textContent = '›';
-    next.className = `${btnClass} ${currentPage === totalPages ? 'opacity-40 cursor-default ' + inactiveClass : inactiveClass}`;
+    const next = document.createElement("button");
+    next.textContent = "›";
+    next.className = `${btnClass} ${currentPage === totalPages ? "opacity-40 cursor-default " + inactiveClass : inactiveClass}`;
     next.disabled = currentPage === totalPages;
-    next.addEventListener('click', () => { currentPage++; renderPage(); });
+    next.addEventListener("click", () => {
+      currentPage++;
+      renderPage();
+    });
     pagination.appendChild(next);
   }
 
   renderPage();
 
   // Lightbox
-  const modal = document.getElementById('gallery-modal');
-  const modalImg = document.getElementById('gallery-modal-img');
-  const modalCaption = document.getElementById('gallery-modal-caption');
-  const modalClose = document.getElementById('gallery-modal-close');
+  const modal = document.getElementById("gallery-modal");
+  const modalImg = document.getElementById("gallery-modal-img");
+  const modalCaption = document.getElementById("gallery-modal-caption");
+  const modalClose = document.getElementById("gallery-modal-close");
 
   function openModal(src, alt, caption) {
     modalImg.src = src;
     modalImg.alt = alt;
     modalCaption.textContent = caption;
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
   }
 
   function closeModal() {
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-    modalImg.src = '';
+    modal.classList.add("hidden");
+    document.body.style.overflow = "";
+    modalImg.src = "";
   }
 
-  document.getElementById('gallery-grid').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-src]');
+  document.getElementById("gallery-grid").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-src]");
     if (btn) openModal(btn.dataset.src, btn.dataset.alt, btn.dataset.caption);
   });
 
-  modalClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
 </script>
