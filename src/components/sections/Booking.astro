@@ -5,11 +5,11 @@ import { getText as t } from "@/lib/googleSheets";
 // Field IDs: find them by opening your Google Form, right-clicking each input → Inspect,
 // look for name="entry.XXXXXXXXX" — set each in .env / GitHub Secrets.
 const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
-const FIELD_NAME = import.meta.env.BOOKING_FIELD_NAME ?? "";
-const FIELD_PHONE = import.meta.env.BOOKING_FIELD_PHONE ?? "";
-const FIELD_DATE = import.meta.env.BOOKING_FIELD_DATE ?? "";
-const FIELD_TIME = import.meta.env.BOOKING_FIELD_TIME ?? "";
-const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
+// const FIELD_NAME = import.meta.env.BOOKING_FIELD_NAME ?? "";
+// const FIELD_PHONE = import.meta.env.BOOKING_FIELD_PHONE ?? "";
+// const FIELD_DATE = import.meta.env.BOOKING_FIELD_DATE ?? "";
+// const FIELD_TIME = import.meta.env.BOOKING_FIELD_TIME ?? "";
+// const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
 ---
 
 <section id="booking" class="py-16 bg-brand-green text-white">
@@ -109,10 +109,7 @@ const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
   </div>
 </section>
 
-<script
-  is:inline
-  define:vars={{ FORM_URL, FIELD_NAME, FIELD_PHONE, FIELD_DATE, FIELD_TIME, FIELD_GUESTS }}
->
+<script is:inline define:vars={{ FORM_URL }}>
   document.getElementById("booking-form").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -124,12 +121,13 @@ const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
 
     if (!FORM_URL) return;
 
-    const params = new URLSearchParams();
-    if (FIELD_NAME) params.set(FIELD_NAME, name);
-    if (FIELD_PHONE) params.set(FIELD_PHONE, phone);
-    if (FIELD_DATE) params.set(FIELD_DATE, date);
-    if (FIELD_TIME) params.set(FIELD_TIME, time);
-    if (FIELD_GUESTS) params.set(FIELD_GUESTS, guests);
+    const params = new URLSearchParams({
+      "entry.1686674607": name,
+      "entry.850348048": phone,
+      "entry.1846799998": time,
+      "entry.1378930350": guests,
+      "entry.941659804": date,
+    });
 
     window.open(`${FORM_URL}?${params.toString()}`, "_blank", "noopener");
   });
