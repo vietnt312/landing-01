@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import logo from "@/assets/logo.png";
 import { getText as t, getSiteConfig } from "@/lib/googleSheets";
 
@@ -32,7 +31,7 @@ const quickLinks = [
   <div class="container grid grid-cols-1 md:grid-cols-3 gap-10 py-12">
     <!-- Brand + contact -->
     <div>
-      <Image src={logo} alt={t("layout.header.logo_alt")} class="h-16 mb-4 w-auto" />
+      <img src={logo.src} alt={t("layout.header.logo_alt")} class="h-16 mb-4 w-auto" />
       <p class="text-sm leading-relaxed opacity-80 mb-4">
         {t("layout.footer.brand_desc")}
       </p>

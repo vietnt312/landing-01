@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import logo from "@/assets/logo.png";
 import { getText as t } from "@/lib/googleSheets";
 
@@ -26,7 +25,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   <div class="container flex items-center justify-between py-3">
     <!-- Logo -->
     <a href={base} class="flex-shrink-0">
-      <Image src={logo} alt={t("layout.header.logo_alt")} class="h-16 w-auto" />
+      <img src={logo.src} alt={t("layout.header.logo_alt")} class="h-16 w-auto" />
     </a>
 
     <!-- Desktop nav -->

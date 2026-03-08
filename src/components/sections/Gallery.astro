@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import { getGalleryImages, getText as t } from "@/lib/googleSheets";
 import { imgSrc, base } from "@/lib/utils";
 
@@ -27,11 +26,9 @@ const PAGE_SIZE = 8;
             class="relative overflow-hidden rounded-xl aspect-square group cursor-zoom-in text-left"
             aria-label={img.caption ?? img.alt}
           >
-            <Image
+            <img
               src={imgSrc(img.src)}
               alt={img.alt}
-              width={600}
-              height={600}
               loading="lazy"
               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
