@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { getGalleryImages, getText as t } from "@/lib/googleSheets";
-import { imgSrc } from "@/lib/utils";
+import { imgSrc, base } from "@/lib/utils";
 
 const images = getGalleryImages();
 const PAGE_SIZE = 8;
@@ -83,7 +83,7 @@ const PAGE_SIZE = 8;
   </figure>
 </div>
 
-<script is:inline define:vars={{ pageSize: PAGE_SIZE }}>
+<script is:inline define:vars={{ pageSize: PAGE_SIZE, baseUrl: base }}>
   const allItems = Array.from(document.querySelectorAll("#gallery-grid [data-item]"));
   const pagination = document.getElementById("gallery-pagination");
 
@@ -150,7 +150,15 @@ const PAGE_SIZE = 8;
   const modalClose = document.getElementById("gallery-modal-close");
 
   function openModal(src, alt, caption) {
-    modalImg.src = src;
+    // Prepend base path if it's a relative path and doesn't already have it
+    let fullSrc = src;
+    if (!src.startsWith("http")) {
+      const s = src.replace(/^\//, "");
+      const b = baseUrl.replace(/\/$/, "");
+      fullSrc = `${b}/${s}`;
+    }
+
+    modalImg.src = fullSrc;
     modalImg.alt = alt;
     modalCaption.textContent = caption;
     modal.classList.remove("hidden");
