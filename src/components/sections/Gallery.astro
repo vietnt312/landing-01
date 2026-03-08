@@ -1,0 +1,31 @@
+---
+import { getGalleryImages } from '@/lib/googleSheets';
+
+const images = await getGalleryImages();
+---
+
+<section id="gallery" class="py-16">
+  <div class="container">
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1">Hình ảnh</p>
+    <h2 class="section-title">Không gian & món ăn</h2>
+    <p class="section-subtitle">Cảm nhận không gian nhà hàng qua từng bức ảnh</p>
+
+    <div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      {images.map((img) => (
+        <a
+          href={img.src}
+          data-lightbox="gallery"
+          data-title={img.caption}
+          class="block overflow-hidden rounded-2xl group"
+        >
+          <img
+            src={img.src}
+            alt={img.alt}
+            loading="lazy"
+            class="w-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-2xl"
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

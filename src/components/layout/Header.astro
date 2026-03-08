@@ -1,0 +1,81 @@
+---
+const navLinks = [
+  { label: 'Trang chủ',    href: '/' },
+  { label: 'Giới thiệu',   href: '/about' },
+  { label: 'Thực đơn',     href: '/menu' },
+  { label: 'Đặt bàn',      href: '/booking' },
+  { label: 'Văn hoá ẩm thực', href: '/food-culture' },
+  { label: 'Tin tức',      href: '/news' },
+  { label: 'Liên hệ',      href: '/contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white transition-all duration-300">
+  <!-- Top banner -->
+  <div class="bg-brand-green text-center text-sm py-1 px-4">
+    Hệ thống Nhà hàng Bê thui Hà Nội - Quán nhậu sân vườn
+  </div>
+
+  <div class="container flex items-center justify-between py-3">
+    <!-- Logo -->
+    <a href="/" class="flex-shrink-0">
+      <img src="/images/logo.png" alt="Bê Thui Hà Nội" class="h-16 w-auto" />
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
+      {navLinks.map(({ label, href }) => (
+        <a
+          href={href}
+          class:list={[
+            'hover:text-brand-gold transition-colors duration-200',
+            { 'text-brand-gold': currentPath === href },
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button
+      id="mobile-menu-toggle"
+      aria-label="Mở menu"
+      class="lg:hidden p-2 rounded focus:outline-none"
+    >
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile nav -->
+  <nav
+    id="mobile-menu"
+    class="lg:hidden hidden flex-col gap-2 px-4 pb-4 text-sm font-medium"
+  >
+    {navLinks.map(({ label, href }) => (
+      <a
+        href={href}
+        class:list={[
+          'block py-2 border-b border-white/10 hover:text-brand-gold transition-colors',
+          { 'text-brand-gold': currentPath === href },
+        ]}
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<!-- Spacer so content doesn't hide under fixed header -->
+<div class="h-[88px]"></div>
+
+<script>
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu   = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+</script>

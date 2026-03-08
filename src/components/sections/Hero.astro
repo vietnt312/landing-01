@@ -1,0 +1,39 @@
+---
+// Hero / banner section — images sourced from /public/images/banners/
+const slides = [
+  {
+    image: '/images/banners/banner-1.jpg',
+    title: 'Bê Thui Hà Nội',
+    subtitle: 'Hương vị truyền thống – Không gian sân vườn',
+    cta: { label: 'Đặt bàn ngay', href: '/booking' },
+  },
+  {
+    image: '/images/banners/banner-2.jpg',
+    title: 'Thực đơn phong phú',
+    subtitle: 'Bê thui, thịt nướng & nhiều món đặc sắc',
+    cta: { label: 'Xem thực đơn', href: '/menu' },
+  },
+];
+---
+
+<section id="hero" class="relative w-full overflow-hidden">
+  <!-- Simple static hero – replace with JS slider if needed -->
+  {slides.map((slide, i) => (
+    <div
+      class:list={['relative min-h-[560px] md:min-h-[680px] bg-cover bg-center flex items-center', { hidden: i > 0 }]}
+      style={`background-image: url('${slide.image}')`}
+      data-slide={i}
+    >
+      <!-- Dark overlay -->
+      <div class="absolute inset-0 bg-black/50"></div>
+
+      <div class="container relative z-10 text-white">
+        <div class="max-w-lg bg-black/60 rounded-2xl p-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-3">{slide.title}</h1>
+          <p class="text-lg mb-6 opacity-90">{slide.subtitle}</p>
+          <a href={slide.cta.href} class="btn-primary">{slide.cta.label}</a>
+        </div>
+      </div>
+    </div>
+  ))}
+</section>

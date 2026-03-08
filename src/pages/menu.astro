@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import MenuCard from '@/components/ui/MenuCard.astro';
+import { getMenuItems } from '@/lib/googleSheets';
+
+const items = await getMenuItems();
+const categories = ['Tất cả', ...new Set(items.map((i) => i.category).filter(Boolean))];
+---
+
+<BaseLayout title="Thực đơn - Bê Thui Hà Nội" description="Khám phá thực đơn phong phú tại Bê Thui Hà Nội">
+
+  <!-- Page header -->
+  <div class="bg-brand-green text-white py-16 text-center">
+    <h1 class="text-4xl font-bold mb-2">Thực đơn</h1>
+    <p class="opacity-80">Tươi ngon mỗi ngày, đậm đà hương vị truyền thống</p>
+  </div>
+
+  <section class="py-12">
+    <div class="container">
+      <!-- Category tabs -->
+      <div class="flex flex-wrap gap-2 mb-8" id="menu-tabs">
+        {categories.map((cat, i) => (
+          <button
+            data-category={cat}
+            class:list={[
+              'px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-200',
+              i === 0
+                ? 'bg-brand-gold text-white border-brand-gold'
+                : 'border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold',
+            ]}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="menu-grid">
+        {items.map((item) => (
+          <MenuCard item={item} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('#menu-tabs button');
+  const cards = document.querySelectorAll<HTMLElement>('#menu-grid [data-category]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const selected = tab.dataset.category ?? 'Tất cả';
+      tabs.forEach((t) => {
+        t.classList.toggle('bg-brand-gold', t.dataset.category === selected);
+        t.classList.toggle('text-white', t.dataset.category === selected);
+        t.classList.toggle('border-brand-gold', t.dataset.category === selected);
+      });
+      cards.forEach((card) => {
+        card.classList.toggle('hidden', selected !== 'Tất cả' && card.dataset.category !== selected);
+      });
+    });
+  });
+</script>

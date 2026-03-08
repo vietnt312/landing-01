@@ -1,0 +1,87 @@
+---
+// Static booking form — submissions handled via Formspree or similar
+// Replace FORMSPREE_ID with your actual form endpoint
+const FORM_ENDPOINT = import.meta.env.BOOKING_FORM_ENDPOINT ?? '#';
+---
+
+<section id="booking" class="py-16 bg-brand-green text-white">
+  <div class="container max-w-2xl">
+    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">Đặt bàn</p>
+    <h2 class="text-3xl font-bold text-center mb-2">Đặt bàn trực tuyến</h2>
+    <p class="text-center opacity-70 mb-8 text-sm">
+      Điền thông tin bên dưới, chúng tôi sẽ liên hệ xác nhận trong vòng 30 phút.
+    </p>
+
+    <form
+      action={FORM_ENDPOINT}
+      method="POST"
+      class="bg-white/10 backdrop-blur rounded-2xl p-8 grid grid-cols-1 sm:grid-cols-2 gap-5"
+    >
+      <div class="flex flex-col gap-1">
+        <label for="booking-name" class="text-sm font-medium">Họ và tên *</label>
+        <input
+          id="booking-name"
+          name="name"
+          type="text"
+          required
+          placeholder="Nguyễn Văn A"
+          class="rounded-xl px-4 py-3 bg-white/20 placeholder:text-white/50 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="booking-phone" class="text-sm font-medium">Số điện thoại *</label>
+        <input
+          id="booking-phone"
+          name="phone"
+          type="tel"
+          required
+          placeholder="0912 345 678"
+          class="rounded-xl px-4 py-3 bg-white/20 placeholder:text-white/50 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="booking-date" class="text-sm font-medium">Ngày đến *</label>
+        <input
+          id="booking-date"
+          name="date"
+          type="date"
+          required
+          class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="booking-time" class="text-sm font-medium">Giờ đến *</label>
+        <input
+          id="booking-time"
+          name="time"
+          type="time"
+          required
+          class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <label for="booking-guests" class="text-sm font-medium">Số khách *</label>
+        <select
+          id="booking-guests"
+          name="guests"
+          required
+          class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        >
+          {[1,2,3,4,5,6,7,8,9,'10+'].map((n) => (
+            <option value={String(n)} class="text-black">{n} khách</option>
+          ))}
+        </select>
+      </div>
+
+      <div class="sm:col-span-2">
+        <button type="submit" class="w-full btn-primary justify-center text-center py-4">
+          Xác nhận đặt bàn
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

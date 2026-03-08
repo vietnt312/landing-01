@@ -1,0 +1,52 @@
+---
+import type { MenuItem } from '@/types';
+
+interface Props {
+  item: MenuItem;
+}
+
+const { item } = Astro.props;
+
+const formattedPrice = new Intl.NumberFormat('vi-VN', {
+  style: 'currency',
+  currency: 'VND',
+}).format(item.price);
+
+const formattedOriginal = item.originalPrice
+  ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.originalPrice)
+  : null;
+---
+
+<article
+  data-category={item.category}
+  class="rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white group"
+>
+  <!-- Image -->
+  <div class="relative aspect-square overflow-hidden">
+    <img
+      src={item.image || '/images/placeholder-food.jpg'}
+      alt={item.name}
+      loading="lazy"
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+    />
+    {formattedOriginal && (
+      <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+        SALE
+      </span>
+    )}
+  </div>
+
+  <!-- Info -->
+  <div class="p-4">
+    <h3 class="font-semibold text-sm mb-1 line-clamp-2">{item.name}</h3>
+    {item.description && (
+      <p class="text-gray-500 text-xs mb-2 line-clamp-2">{item.description}</p>
+    )}
+    <div class="flex items-center gap-2">
+      <span class="text-brand-gold font-bold">{formattedPrice}</span>
+      {formattedOriginal && (
+        <span class="text-gray-400 text-xs line-through">{formattedOriginal}</span>
+      )}
+    </div>
+  </div>
+</article>
