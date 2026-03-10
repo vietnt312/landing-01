@@ -150,4 +150,6 @@ BOOKING_FORM_ENDPOINT    (optional)
 
 ## Learnings & Corrections
 
+- Don't wait for `npm run build` completion
+
 <!-- Grow this section over time -->

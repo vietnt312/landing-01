@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { getText as t } from "@/lib/googleSheets";
+import { imgSrc } from "@/lib/utils";
 
 const features = [
   {
@@ -36,7 +38,19 @@ const features = [
       {
         features.map((f) => (
           <div class="flex flex-col items-center text-center">
-            <span class="text-5xl mb-4">{f.icon}</span>
+            <div class="h-16 w-16 mb-4 flex items-center justify-center">
+              {f.icon.startsWith("/") || f.icon.startsWith("http") ? (
+                <Image
+                  src={imgSrc(f.icon)}
+                  alt={f.title}
+                  width={64}
+                  height={64}
+                  class="h-full w-auto object-contain"
+                />
+              ) : (
+                <span class="text-5xl">{f.icon}</span>
+              )}
+            </div>
             <h3 class="font-bold text-brand-green mb-2">{f.title}</h3>
             <p class="text-gray-500 text-sm leading-relaxed">{f.description}</p>
           </div>

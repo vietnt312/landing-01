@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import { getGalleryImages, getText as t } from "@/lib/googleSheets";
 import { imgSrc, base } from "@/lib/utils";
 
@@ -26,9 +27,11 @@ const PAGE_SIZE = 8;
             class="relative overflow-hidden rounded-xl aspect-square group cursor-zoom-in text-left"
             aria-label={img.caption ?? img.alt}
           >
-            <img
+            <Image
               src={imgSrc(img.src)}
               alt={img.alt}
+              width={600}
+              height={600}
               loading="lazy"
               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -150,9 +153,12 @@ const PAGE_SIZE = 8;
     // Prepend base path if it's a relative path and doesn't already have it
     let fullSrc = src;
     if (!src.startsWith("http")) {
-      const s = src.replace(/^\//, "");
+      let normalizedSrc = src.replace(/^\//, "");
+      if (!normalizedSrc.startsWith("images/")) {
+        normalizedSrc = "images/" + normalizedSrc;
+      }
       const b = baseUrl.replace(/\/$/, "");
-      fullSrc = `${b}/${s}`;
+      fullSrc = `${b}/${normalizedSrc}`;
     }
 
     modalImg.src = fullSrc;

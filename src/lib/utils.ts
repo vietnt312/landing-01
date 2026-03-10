@@ -1,11 +1,17 @@
 export const base = import.meta.env.BASE_URL;
 
 export function imgSrc(src: string): string {
+    if (!src) return "";
     if (src.startsWith("http")) return src;
 
-    // Ensure base doesn't have a trailing slash and src doesn't have a leading slash
-    const b = base.replace(/\/$/, "");
-    const s = src.replace(/^\//, "");
+    // Add /images prefix if it's a relative path and doesn't already have it
+    let normalizedSrc = src.replace(/^\//, "");
+    if (!normalizedSrc.startsWith("images/")) {
+        normalizedSrc = `images/${normalizedSrc}`;
+    }
 
-    return `${b}/${s}`;
+    // Ensure base doesn't have a trailing slash
+    const b = base.replace(/\/$/, "");
+
+    return `${b}/${normalizedSrc}`;
 }
