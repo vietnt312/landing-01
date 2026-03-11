@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 import { getText as t } from "@/lib/googleSheets";
 
 const base = import.meta.env.BASE_URL; // e.g. '/landing-01/'
@@ -19,8 +19,12 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white transition-all duration-300">
   <!-- Top banner -->
-  <div class="bg-brand-green text-center text-sm py-1 px-4">
-    {t("layout.header.banner")}
+  <div
+    class="absolute top-0 left-0 right-0 bg-brand-green overflow-hidden whitespace-nowrap text-xs py-0.5 px-4"
+  >
+    <div class="inline-block animate-marquee-lr">
+      {t("layout.header.banner")}
+    </div>
   </div>
 
   <div class="container flex items-center justify-between py-3">
@@ -82,6 +86,20 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 <!-- Spacer so content doesn't hide under fixed header -->
 <div class="h-[88px]"></div>
+
+<style>
+  @keyframes marquee-lr {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100vw);
+    }
+  }
+  .animate-marquee-lr {
+    animation: marquee-lr 15s linear infinite;
+  }
+</style>
 
 <script>
   const toggle = document.getElementById("mobile-menu-toggle");
