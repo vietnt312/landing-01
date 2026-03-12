@@ -7,9 +7,22 @@ const base = import.meta.env.BASE_URL;
 const items = getMenuItems();
 
 // Derive unique categories
+const catSet = ["all"];
 const categories = [
-  t("sections.menu.all_tab"),
-  ...new Set(items.map((i) => i.category).filter(Boolean)),
+  { cat: "all", label: t("sections.menu.all_tab") },
+  ...new Set(
+    items
+      .map((i) => {
+        if (catSet.includes(i.category)) return null;
+        catSet.push(i.category);
+
+        return {
+          cat: i.category,
+          label: i.catLabel,
+        };
+      })
+      .filter(Boolean)
+  ),
 ];
 const PAGE_SIZE = 8;
 ---
@@ -27,7 +40,7 @@ const PAGE_SIZE = 8;
       {
         categories.map((cat, i) => (
           <button
-            data-category={cat}
+            data-category={cat?.cat}
             class:list={[
               "px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-200",
               i === 0
@@ -35,7 +48,7 @@ const PAGE_SIZE = 8;
                 : "border-gray-300 text-gray-600 hover:border-brand-gold hover:text-brand-gold",
             ]}
           >
-            {cat}
+            {cat?.label}
           </button>
         ))
       }
@@ -55,16 +68,16 @@ const PAGE_SIZE = 8;
   </div>
 </section>
 
-<script is:inline define:vars={{ allTab: t("sections.menu.all_tab"), pageSize: PAGE_SIZE }}>
+<script is:inline define:vars={{ pageSize: PAGE_SIZE }}>
   const tabs = document.querySelectorAll("#menu-tabs button");
   const allCards = Array.from(document.querySelectorAll("#menu-grid [data-category]"));
   const pagination = document.getElementById("menu-pagination");
 
-  let currentTab = allTab;
+  let currentTab = "all";
   let currentPage = 1;
 
   function getVisible() {
-    return allCards.filter((card) => currentTab === allTab || card.dataset.category === currentTab);
+    return allCards.filter((card) => currentTab === "all" || card.dataset.category === currentTab);
   }
 
   function renderPage() {
@@ -127,7 +140,7 @@ const PAGE_SIZE = 8;
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      currentTab = tab.dataset.category ?? allTab;
+      currentTab = tab.dataset.category ?? "all";
       currentPage = 1;
 
       tabs.forEach((t) => {

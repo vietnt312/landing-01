@@ -3,16 +3,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getText as t, getSiteConfig } from "@/lib/googleSheets";
 
 const config = getSiteConfig();
+import PageHeader from "@/components/ui/PageHeader.astro";
 const mapSrc =
   config.mapEmbedUrl ??
   "https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi&output=embed";
 ---
 
-<BaseLayout title="Liên hệ - Bê Thui Hà Nội" description="Liên hệ với Nhà hàng Bê Thui Hà Nội">
-  <div class="bg-brand-green text-white py-16 text-center">
-    <h1 class="text-4xl font-bold mb-2">{t("pages.contact.header_title")}</h1>
-    <p class="opacity-80">{t("pages.contact.header_subtitle")}</p>
-  </div>
+<BaseLayout title="Liên hệ - Bê Thui Hà Nội" description="Liên hệ with Nhà hàng Bê Thui Hà Nội">
+  <PageHeader title={t("pages.contact.header_title")} />
 
   <section class="py-16">
     <div class="container grid grid-cols-1 md:grid-cols-2 gap-12">

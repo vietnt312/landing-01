@@ -20,18 +20,21 @@ const contactItems = [
     label: "Hotline",
     value: config.hotline,
     description: t("sections.contact.hotline.desc") || "Hotline đặt hàng và tư vấn 24/7",
+    action: `location.href='tel:${config.hotline}'`,
   },
   {
     icon: "email",
     label: "Email",
     value: config.email,
     description: t("sections.contact.email.desc") || "Email nhận báo giá, yêu cầu xuất hóa đơn",
+    action: `location.href='mailto:${config.email}'`,
   },
   {
     icon: "location",
     label: "Địa chỉ",
     value: config.address,
-    description: t("sections.contact.address.desc") || "Địa chỉ nhà hàng",
+    description: "",
+    action: `window.open('${mapLink}', '_blank')`,
   },
 ];
 ---
@@ -115,43 +118,44 @@ const contactItems = [
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
       {
         contactItems.map((item) => (
-          <div class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center hover:-translate-y-2 transition-transform duration-300 group">
+          <div
+            onclick={item.action}
+            class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center hover:-translate-y-2 transition-transform duration-300 group cursor-pointer"
+          >
             <div class="w-24 h-24 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-brand-gold/20 transition-colors">
               {item.icon === "phone" && (
-                <img
-                  src="https://bethuihanoi.vn/wp-content/uploads/2023/10/phone-icon.png"
+                <Image
+                  src={imgSrc("features/phone-icon.png")}
                   alt={item.label}
+                  width={120}
+                  height={120}
                   class="w-16 h-16 object-contain"
                 />
               )}
               {item.icon === "email" && (
-                <img
-                  src="https://bethuihanoi.vn/wp-content/uploads/2023/10/mail-icon.png"
+                <Image
+                  src={imgSrc("features/mail-icon.png")}
                   alt={item.label}
+                  width={120}
+                  height={120}
                   class="w-16 h-16 object-contain"
                 />
               )}
               {item.icon === "location" && (
-                <img
-                  src="https://bethuihanoi.vn/wp-content/uploads/2023/10/ship-tan-nha.png"
+                <Image
+                  src={imgSrc("features/map-icon.png")}
                   alt={item.label}
+                  width={120}
+                  height={120}
                   class="w-16 h-16 object-contain"
                 />
               )}
             </div>
-            {item.icon === "phone" ? (
-              <a href={`tel:${item.value}`} class="block">
-                <p class="text-brand-gold font-bold text-lg mb-2">Hotline: {item.value}</p>
-              </a>
-            ) : item.icon === "email" ? (
-              <a href={`mailto:${item.value}`} class="block">
-                <p class="text-brand-gold font-bold text-lg mb-2">{item.value}</p>
-              </a>
-            ) : (
-              <a href={mapLink} class="block">
-                <p class="text-brand-gold font-bold text-lg mb-2">{item.value}</p>
-              </a>
-            )}
+
+            <p class="text-brand-gold font-bold text-lg mb-2">
+              {item.icon === "phone" ? `Hotline: ${item.value}` : item.value}
+            </p>
+
             <p class="text-white/70 text-sm">{item.description}</p>
           </div>
         ))

@@ -1,23 +1,77 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getText as t } from "@/lib/googleSheets";
+import logo from "@/assets/logo.svg";
+import { Image } from "astro:assets";
+import PageHeader from "@/components/ui/PageHeader.astro";
 ---
 
 <BaseLayout title="Giới thiệu - Bê Thui Hà Nội" description="Câu chuyện về Nhà hàng Bê Thui Hà Nội">
-  <div class="bg-brand-green text-white py-16 text-center">
-    <h1 class="text-4xl font-bold mb-2">{t("pages.about.header_title")}</h1>
-    <p class="opacity-80">{t("pages.about.header_subtitle")}</p>
-  </div>
+  <PageHeader title="Giới thiệu" />
 
-  <section class="py-16">
-    <div class="container max-w-3xl prose prose-green mx-auto">
-      <h2>{t("pages.about.section_title")}</h2>
-      <p>
-        {t("pages.about.body1")}
-      </p>
-      <p>
-        {t("pages.about.body2")}
-      </p>
+  <div class="container max-w-4xl mx-auto px-4 pb-20 mt-12">
+    <div class="space-y-8 text-black/90 text-lg md:text-xl leading-relaxed font-light">
+        <p class="text-2xl md:text-3xl font-medium text-black text-center mb-12 italic">
+          "Chào mừng quý khách hàng đến với hệ thống nhà hàng Bê Thui Hà Nội – Thiên đường ẩm thực
+          với hương vị tinh tế và trải nghiệm không gian sân vườn độc đáo!"
+        </p>
+
+        <!-- Center Logo -->
+        <div class="container flex justify-center mb-12">
+          <div class="relative group">
+            <div
+              class="absolute inset-0 bg-brand-gold blur-3xl opacity-20 group-hover:opacity-30 transition-opacity"
+            >
+            </div>
+            <Image
+              src={logo}
+              alt="Bê Thui Hà Nội"
+              width={240}
+              height={240}
+              class="relative w-48 md:w-64 h-auto"
+            />
+          </div>
+        </div>
+
+        <p>
+          Chúng tôi tự hào giới thiệu đến bạn một hành trình ẩm thực tuyệt vời, nơi bạn có cơ hội
+          khám phá và thưởng thức một trong những món ăn ngon nhất của miền Trung Việt Nam – <span
+            class="text-brand-gold font-semibold">Bê Thui</span
+          >
+        </p>
+
+        <p class="mb-6">
+          Tại Bê thui Hà Nội, chúng tôi tôn trọng và yêu quý món ăn truyền thống này bằng cách sử
+          dụng chỉ những nguyên liệu tươi ngon nhất và quy trình nướng chín đều tinh tế. Thịt bê
+          được cắt thành từng miếng mỏng và đặc biệt được kết hợp với các loại gia vị và rau sống
+          tươi ngon, để tạo ra một trải nghiệm ẩm thực không thể quên.
+        </p>
+        <p>
+          Chúng tôi cam kết mang đến cho bạn một không gian thoáng mát và thoải mái, nơi bạn có thể
+          thư giãn và tận hưởng bữa tối đầy hương vị. Đội ngũ nhân viên chuyên nghiệp và nhiệt tình
+          của chúng tôi luôn sẵn sàng phục vụ bạn và đảm bảo bạn có một bữa ăn trọn vẹn.
+        </p>
+
+        <p>
+          Bên cạnh bê thui truyền thống, chúng tôi cũng cung cấp một loạt các món ăn khác ví dụ: <span
+            class="text-brand-gold">Cá Sông, Gà Đồi..</span
+          > để đáp ứng đa dạng hương vị của khách hàng. Với sự kết hợp của hương vị tươi ngon, dịch vụ
+          xuất sắc và không gian thoải mái, chúng tôi tự tin rằng Bê Thui Hà Nội sẽ là điểm đến lý tưởng
+          cho bạn, gia đình và bạn bè.
+        </p>
+
+        <p>
+          Hãy đến và tham gia cùng chúng tôi để trải nghiệm một bữa ăn đầy ngon miệng và ấn tượng
+          tại quán nhậu sân vườn Bê Thui Hà Nội. Chúng tôi rất mong được phục vụ bạn và làm cho mỗi
+          bữa ăn trở thành một kỷ niệm đáng nhớ.
+        </p>
+
+        <div class="pt-8 border-t border-white/10 text-center">
+          <p class="font-medium text-black italic">
+            Cảm ơn bạn đã chọn Bê Thui Hà Nội, nơi bạn có thể thưởng thức bê thui đỉnh cao và hương
+            vị truyền thống đã được tinh chỉnh phù hợp với miền Bắc Việt Nam!
+          </p>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
 </BaseLayout>

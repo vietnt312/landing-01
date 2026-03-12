@@ -79,6 +79,7 @@ export function getMenuItems(): MenuItem[] {
       price: Number(r.price) || 0,
       originalPrice: r.originalPrice ? Number(r.originalPrice) : undefined,
       category: r.category ?? "",
+      catLabel: r.catLabel ?? "",
       image: r.image ?? "",
       imageAlt: r.imageAlt ?? r.name,
       isAvailable: r.isAvailable !== "FALSE",

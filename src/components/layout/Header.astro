@@ -17,44 +17,52 @@ const navLinks = [
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white transition-all duration-300">
+<header class="fixed top-0 left-0 right-0 z-50 bg-black/80 text-white transition-all duration-300">
   <!-- Top banner -->
   <div
-    class="absolute top-0 left-0 right-0 bg-brand-green overflow-hidden whitespace-nowrap text-xs py-0.5 px-4"
+    class="relative w-full bg-brand-green overflow-hidden whitespace-nowrap text-xs py-1 px-4 z-50"
   >
     <div class="inline-block animate-marquee-lr">
       {t("layout.header.banner")}
     </div>
   </div>
 
-  <div class="container flex items-center justify-between py-3">
+  <div class="container flex items-center justify-between py-2">
     <!-- Logo -->
     <a href={base} class="flex-shrink-0">
       <Image src={logo} alt={t("layout.header.logo_alt")} class="h-16 w-auto" />
     </a>
 
     <!-- Desktop nav -->
-    <nav class="hidden lg:flex items-center gap-6 text-sm font-medium">
-      {
-        navLinks.map(({ label, href }) => (
-          <a
-            href={href}
-            class:list={[
-              "hover:text-brand-gold transition-colors duration-200",
-              { "text-brand-gold": currentPath === href },
-            ]}
-          >
-            {label}
-          </a>
-        ))
-      }
-    </nav>
+    <div class="hidden lg:flex">
+      <nav class="lg:flex items-center gap-10 text-base font-semibold uppercase tracking-wider">
+        {
+          navLinks.map(({ label, href }) => (
+            <a
+              href={href}
+              class:list={[
+                "hover:text-brand-gold transition-all duration-300 relative group pb-1",
+                { "text-brand-gold": currentPath === href },
+              ]}
+            >
+              {label}
+              <span
+                class:list={[
+                  "absolute bottom-0 left-0 w-full h-0.5 bg-brand-gold transform origin-left transition-transform duration-300",
+                  currentPath === href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                ]}
+              />
+            </a>
+          ))
+        }
+      </nav>
+    </div>
 
     <!-- Mobile menu button -->
     <button
       id="mobile-menu-toggle"
       aria-label="Mở menu"
-      class="lg:hidden p-2 rounded focus:outline-none"
+      class="lg:hidden absolute right-4 top-[60px] p-2 rounded focus:outline-none"
     >
       <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -67,13 +75,16 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   </div>
 
   <!-- Mobile nav -->
-  <nav id="mobile-menu" class="lg:hidden hidden flex-col gap-2 px-4 pb-4 text-sm font-medium">
+  <nav
+    id="mobile-menu"
+    class="lg:hidden hidden flex-col gap-2 px-4 pb-4 text-base font-medium bg-black/90"
+  >
     {
       navLinks.map(({ label, href }) => (
         <a
           href={href}
           class:list={[
-            "block py-2 border-b border-white/10 hover:text-brand-gold transition-colors",
+            "block py-3 border-b border-white/10 hover:text-brand-gold transition-colors text-center",
             { "text-brand-gold": currentPath === href },
           ]}
         >
@@ -83,9 +94,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     }
   </nav>
 </header>
-
-<!-- Spacer so content doesn't hide under fixed header -->
-<div class="h-[88px]"></div>
 
 <style>
   @keyframes marquee-lr {

@@ -6,6 +6,7 @@ export interface MenuItem {
   price: number;
   originalPrice?: number;
   category: string;
+  catLabel: string;
   image: string;
   imageAlt: string;
   isAvailable: boolean;
