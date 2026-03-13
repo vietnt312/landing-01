@@ -1,29 +1,31 @@
 ---
-import { getText as t } from "@/lib/googleSheets";
+import { getText as t, getSiteConfig } from "@/lib/googleSheets";
 
-// Google Form base URL (e.g. https://docs.google.com/forms/d/e/FORM_ID/viewform)
-// Field IDs: find them by opening your Google Form, right-clicking each input → Inspect,
-// look for name="entry.XXXXXXXXX" — set each in .env / GitHub Secrets.
+const config = getSiteConfig();
+const locations = [
+  { name: "Cơ sở 1", address: config.address, value: 1 },
+  { name: "Cơ sở 2", address: config.address2, value: 2 },
+].filter((loc) => loc.address);
+
 const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
-// const FIELD_NAME = import.meta.env.BOOKING_FIELD_NAME ?? "";
-// const FIELD_PHONE = import.meta.env.BOOKING_FIELD_PHONE ?? "";
-// const FIELD_DATE = import.meta.env.BOOKING_FIELD_DATE ?? "";
-// const FIELD_TIME = import.meta.env.BOOKING_FIELD_TIME ?? "";
-// const FIELD_GUESTS = import.meta.env.BOOKING_FIELD_GUESTS ?? "";
 ---
 
-<section id="booking" class="py-16 bg-brand-green text-white">
-  <div class="container max-w-2xl">
-    <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">
+<section id="booking" class="py-16">
+  <div class="container max-w-2xl bg-brand-green text-white pt-8 pb-4 px-4 rounded-2xl">
+    <!-- <p class="text-brand-gold font-semibold uppercase tracking-widest text-sm mb-1 text-center">
       {t("sections.booking.eyebrow")}
-    </p>
-    <h2 class="text-3xl font-bold text-center mb-2">{t("sections.booking.title")}</h2>
+    </p> -->
+    <h2 class="text-3xl font-bold text-center mb-2 text-brand-gold">
+      {t("sections.booking.title")}
+    </h2>
     <p class="text-center opacity-70 mb-8 text-sm">
       {t("sections.booking.subtitle")}
     </p>
 
     <form
       id="booking-form"
+      action={FORM_URL}
+      method="POST"
       class="bg-white/10 backdrop-blur rounded-2xl p-8 grid grid-cols-1 sm:grid-cols-2 gap-5"
     >
       <div class="flex flex-col gap-1">
@@ -31,8 +33,8 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           >{t("sections.booking.form.name_label")}</label
         >
         <input
-          id="booking-name"
-          name="name"
+          id="name"
+          name="entry.1686674607"
           type="text"
           required
           placeholder={t("sections.booking.form.name_placeholder")}
@@ -45,8 +47,8 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           >{t("sections.booking.form.phone_label")}</label
         >
         <input
-          id="booking-phone"
-          name="phone"
+          id="phone"
+          name="entry.850348048"
           type="tel"
           required
           placeholder={t("sections.booking.form.phone_placeholder")}
@@ -59,10 +61,11 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           >{t("sections.booking.form.date_label")}</label
         >
         <input
-          id="booking-date"
-          name="date"
+          id="date"
+          name="entry.941659804"
           type="date"
           required
+          value={new Date().toISOString().split("T")[0]}
           class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         />
       </div>
@@ -72,8 +75,8 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           >{t("sections.booking.form.time_label")}</label
         >
         <input
-          id="booking-time"
-          name="time"
+          id="time"
+          name="entry.1846799998"
           type="time"
           required
           class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
@@ -85,8 +88,8 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           >{t("sections.booking.form.guests_label")}</label
         >
         <select
-          id="booking-guests"
-          name="guests"
+          id="guests"
+          name="entry.1378930350"
           required
           class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         >
@@ -100,35 +103,234 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
         </select>
       </div>
 
+      <div class="flex flex-col gap-1 sm:col-span-2">
+        <label for="booking-branch" class="text-sm font-medium">Chọn cơ sở đặt bàn</label>
+        <select
+          id="location"
+          name="entry.166151270"
+          required
+          class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
+        >
+          {
+            locations.map((loc, idx) => (
+              <option value={loc.value} class="text-black">
+                {loc.name}: {loc.address}
+              </option>
+            ))
+          }
+        </select>
+        <p class="text-[10px] opacity-50 mt-1">* Vui lòng chọn đúng cơ sở bạn muốn đến.</p>
+      </div>
+
       <div class="sm:col-span-2">
-        <button type="submit" class="w-full btn-primary justify-center text-center py-4">
-          {t("sections.booking.form.submit")}
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full btn-primary justify-center text-center py-4 flex items-center transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          <span id="btn-text">{t("sections.booking.form.submit")}</span>
+          <div id="btn-loader" class="hidden ml-3">
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
         </button>
       </div>
     </form>
   </div>
+
+  <!-- Status Popup -->
+  <div
+    id="booking-popup"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 invisible transition-all duration-300"
+  >
+    <div
+      class="bg-white text-brand-green p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl transform scale-95 transition-all duration-300"
+      id="popup-content"
+    >
+      <div id="popup-success-icon" class="hidden mb-4 justify-center">
+        <div
+          class="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto"
+        >
+          <svg
+            class="w-8 h-8 text-brand-green"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+        </div>
+      </div>
+      <div id="popup-error-icon" class="hidden mb-4 justify-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+      </div>
+
+      <h3 id="popup-title" class="text-2xl font-bold mb-2">Thông báo</h3>
+      <p id="popup-message" class="text-gray-600 mb-6"></p>
+
+      <button
+        id="close-popup"
+        class="w-full py-3 bg-brand-green text-white rounded-xl font-semibold hover:bg-brand-green/90 transition-colors"
+      >
+        Đóng
+      </button>
+    </div>
+  </div>
 </section>
 
 <script is:inline define:vars={{ FORM_URL }}>
-  document.getElementById("booking-form").addEventListener("submit", (e) => {
+  const form = document.getElementById("booking-form");
+  const submitBtn = document.getElementById("submit-btn");
+  const btnText = document.getElementById("btn-text");
+  const btnLoader = document.getElementById("btn-loader");
+  const popup = document.getElementById("booking-popup");
+  const popupContent = document.getElementById("popup-content");
+  const popupTitle = document.getElementById("popup-title");
+  const popupMessage = document.getElementById("popup-message");
+  const closePopup = document.getElementById("close-popup");
+  const successIcon = document.getElementById("popup-success-icon");
+  const errorIcon = document.getElementById("popup-error-icon");
+
+  const dateInput = document.getElementById("date");
+
+  // Set minimum date to today
+  const today = new Date().toISOString().split("T")[0];
+  dateInput.setAttribute("min", today);
+
+  const showPopup = (success, title, message) => {
+    popupTitle.textContent = title;
+    popupMessage.textContent = message;
+
+    if (success) {
+      successIcon.classList.remove("hidden");
+      successIcon.classList.add("flex");
+      errorIcon.classList.add("hidden");
+      errorIcon.classList.remove("flex");
+    } else {
+      errorIcon.classList.remove("hidden");
+      errorIcon.classList.add("flex");
+      successIcon.classList.add("hidden");
+      successIcon.classList.remove("flex");
+    }
+
+    popup.classList.remove("invisible", "opacity-0");
+    popupContent.classList.remove("scale-95");
+    popupContent.classList.add("scale-100");
+  };
+
+  const hidePopup = () => {
+    popup.classList.add("invisible", "opacity-0");
+    popupContent.classList.remove("scale-100");
+    popupContent.classList.add("scale-95");
+  };
+
+  closePopup.addEventListener("click", hidePopup);
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) hidePopup();
+  });
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("booking-name").value;
-    const phone = document.getElementById("booking-phone").value;
-    const date = document.getElementById("booking-date").value;
-    const time = document.getElementById("booking-time").value;
-    const guests = document.getElementById("booking-guests").value;
+    if (!FORM_URL) {
+      showPopup(false, "Lỗi cấu hình", "Form endpoint chưa được thiết lập.");
+      return;
+    }
 
-    if (!FORM_URL) return;
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
 
-    const params = new URLSearchParams({
-      "entry.1686674607": name,
-      "entry.850348048": phone,
-      "entry.1846799998": time,
-      "entry.1378930350": guests,
-      "entry.941659804": date,
-    });
+    // 1. Name validation
+    if (!name) {
+      showPopup(false, "Thiếu thông tin", "Vui lòng nhập tên của bạn.");
+      return;
+    }
 
-    window.open(`${FORM_URL}?${params.toString()}`, "_blank", "noopener");
+    // 2. Vietnamese Phone validation
+    const phoneRegex = /(84|0[3|5|7|8|9])([0-9]{8})\b/;
+    if (!phoneRegex.test(phone)) {
+      showPopup(
+        false,
+        "Số điện thoại không hợp lệ",
+        "Vui lòng nhập số điện thoại Việt Nam hợp lệ (ví dụ: 0912345678)."
+      );
+      return;
+    }
+
+    // 3. Date & Time validation (must be in the future)
+    const selectedDateTime = new Date(`${date}T${time}`);
+    const now = new Date();
+    console.log(selectedDateTime, now);
+    if (selectedDateTime <= now) {
+      showPopup(false, "Thời gian không hợp lệ", "Vui lòng chọn ngày và giờ trong tương lai.");
+      return;
+    }
+
+    // Set loading state
+    submitBtn.disabled = true;
+    btnLoader.classList.remove("hidden");
+    btnText.textContent = "Đang gửi...";
+
+    const formData = new FormData(form);
+
+    try {
+      // Google Forms doesn't support CORS for direct Fetch/XHR submission with JSON response.
+      // We use 'no-cors' which means we can't read the response, but the submission still goes through.
+      await fetch(FORM_URL, {
+        method: "POST",
+        body: formData,
+        mode: "no-cors",
+      });
+
+      // Since we use no-cors, we assume success if no network error occurred.
+      showPopup(
+        true,
+        "Thành công!",
+        "Yêu cầu đặt bàn của bạn đã được gửi. Chúng tôi sẽ liên hệ lại sớm nhất."
+      );
+      form.reset();
+      // Reset min date after form reset
+      dateInput.setAttribute("min", today);
+    } catch (error) {
+      console.error("Submission error:", error);
+      showPopup(
+        false,
+        "Gửi thất bại",
+        "Đã có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau hoặc gọi điện trực tiếp."
+      );
+    } finally {
+      // Reset loading state
+      submitBtn.disabled = false;
+      btnLoader.classList.add("hidden");
+      btnText.textContent = "ĐẶT BÀN NGAY";
+    }
   });
 </script>

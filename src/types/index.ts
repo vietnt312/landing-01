@@ -40,6 +40,7 @@ export interface SiteConfig {
   hotline: string;
   email: string;
   address: string;
+  address2?: string;
   facebook?: string;
   tiktok?: string;
   youtube?: string;
@@ -47,6 +48,7 @@ export interface SiteConfig {
   messenger?: string;
   bookingUrl?: string;
   mapEmbedUrl?: string;
+  mapEmbedUrl2?: string;
   seoTitle?: string;
   seoDescription?: string;
   copyright?: string;

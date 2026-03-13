@@ -4,9 +4,38 @@ import { getText as t, getSiteConfig } from "@/lib/googleSheets";
 
 const config = getSiteConfig();
 import PageHeader from "@/components/ui/PageHeader.astro";
-const mapSrc =
-  config.mapEmbedUrl ??
-  "https://maps.google.com/maps?q=28+Nguyen+Huu+Tho,+Dinh+Cong,+Hanoi&output=embed";
+
+// Prepare Locations data
+const locations = [
+  {
+    name: "Cơ sở 1",
+    address: config.address,
+    embedUrl: config.mapEmbedUrl,
+  },
+  {
+    name: "Cơ sở 2",
+    address: config.address2,
+    embedUrl: config.mapEmbedUrl2,
+  },
+].filter((loc) => loc.address && loc.embedUrl);
+
+// Helper to format map URLs
+const getMapData = (rawMapUrl: string | undefined) => {
+  if (!rawMapUrl) return { src: "", link: "" };
+  const src =
+    rawMapUrl.includes("google.com") &&
+    !rawMapUrl.includes("output=embed") &&
+    !rawMapUrl.includes("/embed")
+      ? `${rawMapUrl}${rawMapUrl.includes("?") ? "&" : "?"}output=embed`
+      : rawMapUrl;
+  const link = rawMapUrl.replace("&output=embed", "").replace("?output=embed", "");
+  return { src, link };
+};
+
+const mapData = locations.map((loc) => ({
+  ...loc,
+  ...getMapData(loc.embedUrl),
+}));
 ---
 
 <BaseLayout title="Liên hệ - Bê Thui Hà Nội" description="Liên hệ with Nhà hàng Bê Thui Hà Nội">
@@ -17,43 +46,127 @@ const mapSrc =
       <!-- Contact info -->
       <div>
         <h2 class="text-2xl font-bold text-brand-green mb-6">{t("pages.contact.section_title")}</h2>
-        <ul class="space-y-4 text-gray-700">
-          <li class="flex gap-3 items-start">
-            <span class="text-2xl">📞</span>
+        <ul class="space-y-6 text-gray-700">
+          <li class="flex gap-4 items-start">
+            <span class="text-3xl bg-brand-gold/10 p-3 rounded-2xl">📞</span>
             <div>
-              <p class="font-medium">{t("pages.contact.hotline_label")}</p>
-              <a href={`tel:${config.hotline}`} class="text-brand-gold hover:underline"
-                >{config.hotline}</a
+              <p class="font-bold text-brand-green uppercase text-xs tracking-wider mb-1">
+                {t("pages.contact.hotline_label")}
+              </p>
+              <a
+                href={`tel:${config.hotline}`}
+                class="text-xl font-semibold text-brand-gold hover:text-brand-green transition-colors"
               >
+                {config.hotline}
+              </a>
             </div>
           </li>
-          <li class="flex gap-3 items-start">
-            <span class="text-2xl">✉️</span>
+          <li class="flex gap-4 items-start">
+            <span class="text-3xl bg-brand-gold/10 p-3 rounded-2xl">✉️</span>
             <div>
-              <p class="font-medium">{t("pages.contact.email_label")}</p>
-              <a href={`mailto:${config.email}`} class="text-brand-gold hover:underline">
+              <p class="font-bold text-brand-green uppercase text-xs tracking-wider mb-1">
+                {t("pages.contact.email_label")}
+              </p>
+              <a
+                href={`mailto:${config.email}`}
+                class="text-lg font-medium text-brand-gold hover:text-brand-green transition-colors"
+              >
                 {config.email}
               </a>
             </div>
           </li>
-          <li class="flex gap-3 items-start">
-            <span class="text-2xl">📍</span>
-            <div>
-              <p class="font-medium">{t("pages.contact.address_label")}</p>
-              <p>{config.address}</p>
-            </div>
-          </li>
+          {
+            locations.map((loc, idx) => (
+              <li class="flex gap-4 items-start">
+                <span class="text-3xl bg-brand-gold/10 p-3 rounded-2xl">📍</span>
+                <div>
+                  <p class="font-bold text-brand-green uppercase text-xs tracking-wider mb-1">
+                    {t("pages.contact.address_label")} {locations.length > 1 ? idx + 1 : ""}
+                  </p>
+                  <p class="text-lg leading-snug">{loc.address}</p>
+                </div>
+              </li>
+            ))
+          }
         </ul>
       </div>
 
-      <!-- Map -->
-      <div class="rounded-2xl overflow-hidden aspect-video md:aspect-auto">
-        <iframe
-          src={mapSrc}
-          class="w-full h-full min-h-[300px] border-0"
-          loading="lazy"
-          title={t("pages.contact.map_title")}></iframe>
+      <!-- Map with Switcher -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-brand-green uppercase tracking-widest text-sm">
+            {t("pages.contact.map_title")}
+          </h3>
+
+          {
+            mapData.length > 1 && (
+              <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                {mapData.map((_, idx) => (
+                  <button
+                    class={`px-4 py-2 text-sm rounded-lg transition-all duration-300 contact-map-tab-btn ${idx === 0 ? "bg-brand-gold text-black font-bold shadow-md" : "text-gray-500 hover:text-brand-green"}`}
+                    data-idx={idx}
+                  >
+                    CS {idx + 1}
+                  </button>
+                ))}
+              </div>
+            )
+          }
+        </div>
+
+        <div class="relative overflow-hidden rounded-3xl shadow-2xl border border-gray-100 aspect-video md:aspect-[4/3]">
+          {
+            mapData.map((map, idx) => (
+              <div
+                id={`contact-map-container-${idx}`}
+                class={`absolute inset-0 transition-all duration-500 contact-map-container ${idx === 0 ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              >
+                <iframe
+                  src={map.src}
+                  class="w-full h-full border-0"
+                  loading="lazy"
+                  title={`${t("pages.contact.map_title")} - ${map.name}`}
+                />
+              </div>
+            ))
+          }
+        </div>
+        <p class="text-center text-sm text-gray-500 italic">
+          * Nhấp vào bản đồ để mở trong Google Maps
+        </p>
       </div>
     </div>
   </section>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabBtns = document.querySelectorAll(".contact-map-tab-btn");
+      const mapContainers = document.querySelectorAll(".contact-map-container");
+
+      tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-idx"));
+
+          // Update buttons
+          tabBtns.forEach((b) => {
+            b.classList.remove("bg-brand-gold", "text-black", "font-bold", "shadow-md");
+            b.classList.add("text-gray-500");
+          });
+          btn.classList.add("bg-brand-gold", "text-black", "font-bold", "shadow-md");
+          btn.classList.remove("text-gray-500");
+
+          // Update maps
+          mapContainers.forEach((container, cIdx) => {
+            if (cIdx === idx) {
+              container.classList.add("opacity-100", "z-10");
+              container.classList.remove("opacity-0", "z-0");
+            } else {
+              container.classList.remove("opacity-100", "z-10");
+              container.classList.add("opacity-0", "z-0");
+            }
+          });
+        });
+      });
+    });
+  </script>
 </BaseLayout>

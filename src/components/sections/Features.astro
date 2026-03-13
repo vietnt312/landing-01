@@ -5,7 +5,10 @@ import { Image } from "astro:assets";
 import logo from "@/assets/logo.svg";
 
 const config = getSiteConfig();
-const mapLink = config.mapEmbedUrl?.substring(0, config.mapEmbedUrl?.length - 13);
+const locations = [
+  { address: config.address, mapUrl: config.mapEmbedUrl },
+  { address: config.address2, mapUrl: config.mapEmbedUrl2 },
+].filter((loc) => loc.address);
 
 const featuresList = [
   { icon: "/icons/icon-be.png", text: "Bê thui nguyên con, luôn tươi mới" },
@@ -32,9 +35,9 @@ const contactItems = [
   {
     icon: "location",
     label: "Địa chỉ",
-    value: config.address,
+    value: locations.map((loc) => loc.address),
     description: "",
-    action: `window.open('${mapLink}', '_blank')`,
+    action: "", // Handled per-item click if multiple
   },
 ];
 ---
@@ -119,8 +122,8 @@ const contactItems = [
       {
         contactItems.map((item) => (
           <div
-            onclick={item.action}
-            class="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center hover:-translate-y-2 transition-transform duration-300 group cursor-pointer"
+            onclick={item.action && !Array.isArray(item.value) ? item.action : ""}
+            class={`bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl p-8 text-center hover:-translate-y-2 transition-transform duration-300 group ${item.action && !Array.isArray(item.value) ? "cursor-pointer" : ""}`}
           >
             <div class="w-24 h-24 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-brand-gold/20 transition-colors">
               {item.icon === "phone" && (
@@ -152,11 +155,23 @@ const contactItems = [
               )}
             </div>
 
-            <p class="text-brand-gold font-bold text-lg mb-2">
-              {item.icon === "phone" ? `Hotline: ${item.value}` : item.value}
-            </p>
-
-            <p class="text-white/70 text-sm">{item.description}</p>
+            <div class="space-y-2">
+              {Array.isArray(item.value) ? (
+                item.value.map((addr, idx) => (
+                  <p
+                    onclick={`window.open('${locations[idx].mapUrl}', '_blank')`}
+                    class="text-white hover:text-brand-gold font-medium text-sm transition-colors cursor-pointer block pb-2 border-b border-white/10 last:border-0"
+                  >
+                    <span class="text-brand-gold font-bold block mb-1">Cơ sở {idx + 1}:</span>
+                    {addr}
+                  </p>
+                ))
+              ) : (
+                <p class="text-brand-gold font-bold text-lg mb-2">
+                  {item.icon === "phone" ? `Hotline: ${item.value}` : item.value}
+                </p>
+              )}
+            </div>
           </div>
         ))
       }
