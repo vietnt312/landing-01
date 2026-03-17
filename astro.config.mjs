@@ -3,8 +3,8 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://vietnt312.github.io",
-  base: "/landing-01",
+  site: "https://achub.site",
+  // base: "/landing-01",
   integrations: [tailwind()],
   output: "static",
   image: {
