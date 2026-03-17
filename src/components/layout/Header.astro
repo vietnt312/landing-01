@@ -34,7 +34,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     </a>
 
     <!-- Desktop nav -->
-    <div class="hidden lg:flex">
+    <div class="hidden lg:flex pr-24">
       <nav class="lg:flex items-center gap-10 text-base font-semibold uppercase tracking-wider">
         {
           navLinks.map(({ label, href }) => (
@@ -62,7 +62,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     <button
       id="mobile-menu-toggle"
       aria-label="Mở menu"
-      class="lg:hidden absolute right-4 top-[60px] p-2 rounded focus:outline-none"
+      class="lg:hidden p-2 rounded focus:outline-none"
     >
       <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
