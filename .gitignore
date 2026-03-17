@@ -29,3 +29,5 @@ Thumbs.db
 # editors
 .vscode/settings.json
 .idea/
+
+scripts/

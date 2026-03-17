@@ -54,12 +54,48 @@ const categories = [
       </div>
     </div>
   </section>
+
+  <!-- Lightbox Modal -->
+  <div
+    id="menu-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden"
+    role="dialog"
+    aria-modal="true"
+  >
+    <button
+      id="menu-modal-close"
+      class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors"
+      aria-label="Đóng"
+    >
+      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <div class="flex flex-col items-center gap-4 px-4 max-w-[90vw] max-h-[90vh]">
+      <img
+        id="menu-modal-img"
+        src=""
+        alt=""
+        class="w-[60vw] h-[80vh] object-cover rounded-xl shadow-2xl"
+      />
+      <div class="bg-white rounded-xl p-6 max-w-md w-full">
+        <h3 id="menu-modal-name" class="text-2xl font-bold text-gray-800 mb-2"></h3>
+        <p id="menu-modal-description" class="text-gray-600 text-sm mb-4"></p>
+        <div class="flex items-center gap-3">
+          <span id="menu-modal-price" class="text-brand-gold font-bold text-2xl"></span>
+          <span id="menu-modal-original" class="text-gray-400 text-sm line-through"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
 
 <script is:inline>
   const tabs = document.querySelectorAll("#menu-tabs button");
   const cards = document.querySelectorAll("#menu-grid [data-category]");
 
+  // Category filtering
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const selected = tab.dataset.category ?? "all";
@@ -73,5 +109,57 @@ const categories = [
         card.classList.toggle("hidden", selected !== "all" && card.dataset.category !== selected);
       });
     });
+  });
+
+  // Lightbox functionality
+  const modal = document.getElementById("menu-modal");
+  const modalImg = document.getElementById("menu-modal-img");
+  const modalName = document.getElementById("menu-modal-name");
+  const modalDescription = document.getElementById("menu-modal-description");
+  const modalPrice = document.getElementById("menu-modal-price");
+  const modalOriginal = document.getElementById("menu-modal-original");
+  const modalClose = document.getElementById("menu-modal-close");
+
+  function openModal(src, name, description, price, original) {
+    // Convert small image to large version (remove -small suffix)
+    let imageSrc = src.startsWith('http') ? src : `/images/menu/${src.split('/').pop()}`;
+    imageSrc = imageSrc.replace('-small.', '.');
+
+    modalImg.src = imageSrc;
+    modalImg.alt = name;
+    modalName.textContent = name;
+    modalDescription.textContent = description || '';
+    modalPrice.textContent = price;
+    modalOriginal.textContent = original || '';
+    modalOriginal.classList.toggle('hidden', !original);
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden");
+    document.body.style.overflow = "";
+    modalImg.src = "";
+  }
+
+  document.getElementById("menu-grid").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-src]");
+    if (btn) {
+      openModal(
+        btn.dataset.src,
+        btn.dataset.name,
+        btn.dataset.description,
+        btn.dataset.price,
+        btn.dataset.original
+      );
+    }
+  });
+
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
   });
 </script>
