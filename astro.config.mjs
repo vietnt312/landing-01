@@ -3,7 +3,7 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://achub.site",
+  site: "https://www.achub.site",
   // base: "/landing-01",
   integrations: [tailwind()],
   output: "static",
