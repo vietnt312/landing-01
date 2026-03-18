@@ -79,6 +79,7 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
           name="entry.1846799998"
           type="time"
           required
+          max="22:00"
           class="rounded-xl px-4 py-3 bg-white/20 text-white border border-white/30 focus:outline-none focus:border-brand-gold"
         />
       </div>
@@ -218,10 +219,25 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
   const errorIcon = document.getElementById("popup-error-icon");
 
   const dateInput = document.getElementById("date");
+  const timeInput = document.getElementById("time");
 
-  // Set minimum date to today
   const today = new Date().toISOString().split("T")[0];
   dateInput.setAttribute("min", today);
+
+  function updateTimeMin() {
+    if (dateInput.value === today) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 30);
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      timeInput.setAttribute("min", `${hh}:${mm}`);
+    } else {
+      timeInput.removeAttribute("min");
+    }
+  }
+
+  updateTimeMin();
+  dateInput.addEventListener("change", updateTimeMin);
 
   const showPopup = (success, title, message) => {
     popupTitle.textContent = title;
@@ -285,13 +301,21 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
       return;
     }
 
-    // 3. Date & Time validation (must be in the future)
-    const selectedDateTime = new Date(`${date}T${time}`);
-    const now = new Date();
-    console.log(selectedDateTime, now);
-    if (selectedDateTime <= now) {
-      showPopup(false, "Thời gian không hợp lệ", "Vui lòng chọn ngày và giờ trong tương lai.");
+    // 3. Time constraints
+    const [hours, mins] = time.split(":").map(Number);
+    if (hours * 60 + mins > 22 * 60) {
+      showPopup(false, "Thời gian không hợp lệ", "Nhà hàng không nhận đặt bàn sau 22:00.");
       return;
+    }
+    if (date === today) {
+      const earliest = new Date();
+      earliest.setMinutes(earliest.getMinutes() + 30, 0, 0);
+      const selected = new Date();
+      selected.setHours(hours, mins, 0, 0);
+      if (selected < earliest) {
+        showPopup(false, "Thời gian không hợp lệ", "Vui lòng đặt bàn trước ít nhất 30 phút.");
+        return;
+      }
     }
 
     // Set loading state
@@ -317,8 +341,8 @@ const FORM_URL = import.meta.env.BOOKING_FORM_ENDPOINT ?? "";
         "Yêu cầu đặt bàn của bạn đã được gửi. Chúng tôi sẽ liên hệ lại sớm nhất."
       );
       form.reset();
-      // Reset min date after form reset
       dateInput.setAttribute("min", today);
+      updateTimeMin();
     } catch (error) {
       console.error("Submission error:", error);
       showPopup(

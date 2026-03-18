@@ -48,11 +48,6 @@ jobs:
         env:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           BOOKING_FORM_ENDPOINT: ${{ secrets.BOOKING_FORM_ENDPOINT }}
-          BOOKING_FIELD_NAME: ${{ secrets.BOOKING_FIELD_NAME }}
-          BOOKING_FIELD_PHONE: ${{ secrets.BOOKING_FIELD_PHONE }}
-          BOOKING_FIELD_DATE: ${{ secrets.BOOKING_FIELD_DATE }}
-          BOOKING_FIELD_TIME: ${{ secrets.BOOKING_FIELD_TIME }}
-          BOOKING_FIELD_GUESTS: ${{ secrets.BOOKING_FIELD_GUESTS }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

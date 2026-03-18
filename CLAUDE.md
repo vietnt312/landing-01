@@ -151,5 +151,6 @@ BOOKING_FORM_ENDPOINT    (optional)
 ## Learnings & Corrections
 
 - Don't wait for `npm run build` completion
+- Don't replace <Image> with <img>
 
 <!-- Grow this section over time -->
