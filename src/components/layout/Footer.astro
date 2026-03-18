@@ -37,15 +37,7 @@ const mapData = locations.map((loc) => ({
   ...getMapData(loc.embedUrl),
 }));
 
-const base = import.meta.env.BASE_URL;
-
-const quickLinks = [
-  { label: t("layout.header.nav.home"), href: base },
-  { label: t("layout.header.nav.about"), href: `${base}about` },
-  { label: t("layout.header.nav.menu"), href: `${base}menu` },
-  { label: t("layout.header.nav.booking"), href: `${base}booking` },
-  { label: t("layout.header.nav.contact"), href: `${base}contact` },
-];
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <footer class="bg-black/90 text-white border-t border-white/10">

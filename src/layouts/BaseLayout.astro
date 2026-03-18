@@ -2,6 +2,7 @@
 import favicon from "@/assets/favicon.png";
 import Header from "@/components/layout/Header.astro";
 import Footer from "@/components/layout/Footer.astro";
+import FloatingToolbar from "@/components/layout/FloatingToolbar.astro";
 import "@/styles/global.css";
 
 interface Props {
@@ -44,5 +45,6 @@ addPadding = !(currentPath.endsWith("/index.html") || currentPath.endsWith(base)
       <slot />
     </main>
     <Footer />
+    <FloatingToolbar />
   </body>
 </html>

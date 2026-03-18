@@ -2,7 +2,7 @@
 import MenuCard from "@/components/ui/MenuCard.astro";
 import { getMenuItems, getText as t } from "@/lib/googleSheets";
 
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const items = getMenuItems();
 

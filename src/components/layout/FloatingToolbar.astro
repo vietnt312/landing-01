@@ -1,0 +1,183 @@
+---
+import { getText as t, getSiteConfig } from "@/lib/googleSheets";
+
+const config = getSiteConfig();
+const hotline = config.hotline || "0828662929";
+const zaloLink = `https://zalo.me/${hotline}`;
+const messengerLink = config.facebook
+  ? `https://m.me/${config.facebook.split("/").pop()}`
+  : "https://m.me/61551166686862";
+const smsLink = `sms:${hotline}`;
+const phoneLink = `tel:${hotline}`;
+const embedSuffix = "&output=embed";
+const locationLink =
+  (config.mapEmbedUrl?.endsWith(embedSuffix)
+    ? config.mapEmbedUrl.replace(embedSuffix, "")
+    : config.mapEmbedUrl) ?? "#";
+
+// Icon paths
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+interface ToolbarItem {
+  href: string;
+  label: string;
+  icon: string;
+  iconClass?: string;
+  linkClass?: string;
+  liClass?: string;
+  animated?: boolean;
+  external?: boolean;
+}
+
+const items: ToolbarItem[] = [
+  {
+    href: locationLink,
+    label: "Tìm đường",
+    icon: `${base}images/icon-map.png`,
+    linkClass: "hover:bg-brand-gold hover:text-white",
+    external: true,
+  },
+  {
+    href: zaloLink,
+    label: "Chat Zalo",
+    icon: `${base}images/iconzalo.jpg`,
+    linkClass: "hover:bg-brand-gold hover:text-white",
+    external: true,
+  },
+  {
+    href: phoneLink,
+    label: "Gọi điện",
+    icon: `${base}images/icon-goi-dien.png`,
+    linkClass: "hover:bg-brand-gold hover:text-white",
+    liClass: "phone-mobile md:hidden",
+    animated: true,
+  },
+  {
+    href: messengerLink,
+    label: "Messenger",
+    icon: `${base}images/icon-messenger.png`,
+    linkClass: "hover:bg-brand-gold hover:text-white",
+    external: true,
+  },
+  {
+    href: smsLink,
+    label: "Nhắn tin SMS",
+    icon: `${base}images/icon-sms.png`,
+    linkClass: "hover:bg-brand-gold hover:text-white chat_animation",
+    liClass: "md:hidden",
+  },
+];
+---
+
+<!-- Desktop: fixed bottom-left column | Mobile: fixed bottom row -->
+<div
+  class="sidebar-fixed fixed z-40
+         bottom-0 left-0 right-0
+         md:bottom-4 md:left-4 md:right-auto md:w-auto
+         bg-white md:bg-transparent
+         border-t border-gray-200 md:border-0
+         shadow-[0_-2px_10px_rgba(0,0,0,0.1)] md:shadow-none"
+>
+  <ul
+    class="flex flex-row md:flex-col gap-0 md:gap-[0.5rem] justify-around md:justify-start h-16 md:h-auto items-center md:items-start"
+  >
+    {
+      items.map((item) => (
+        <li
+          class={`flex-1 md:flex-none w-[60px] h-[60px] md:rounded truncate ${item.liClass ?? ""}`}
+        >
+          <a
+            href={item.href}
+            rel="nofollow"
+            target={item.external ? "_blank" : undefined}
+            class={`flex flex-col items-center justify-center gap-1
+                  md:justify-start md:gap-1
+                  py-2 px-1 md:py-2
+                  bg-white md:shadow-md
+                  h-full md:rounded 
+                  transition-all duration-200
+                  ${item.linkClass ?? ""}`}
+          >
+            {item.animated ? (
+              <span class="phone_animation animation-shadow">
+                <img
+                  src={item.icon}
+                  alt={item.label}
+                  class={`w-7 h-7 md:w-8 md:h-8 object-cover object-center ${item.iconClass ?? ""}`}
+                />
+              </span>
+            ) : (
+              <img
+                src={item.icon}
+                alt={item.label}
+                class={`w-7 h-7 md:w-8 md:h-8 object-cover object-center ${item.iconClass ?? ""}`}
+              />
+            )}
+            <span class="text-[9px] font-medium leading-tight text-center ">{item.label}</span>
+          </a>
+        </li>
+      ))
+    }
+
+    <!-- Back to top - desktop only -->
+    <li class="hidden md:block to-top-pc w-[60px]">
+      <a
+        href="#"
+        class="flex items-center justify-center
+               py-2 px-4
+               bg-white rounded-full shadow-md
+               hover:bg-brand-gold hover:text-white
+               transition-all duration-200
+               text-sm font-medium"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path>
+        </svg>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<style>
+  /* Phone animation */
+  .phone_animation {
+    display: inline-block;
+    animation: phone-ring 1.5s ease-in-out infinite;
+  }
+
+  @keyframes phone-ring {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    10%,
+    30% {
+      transform: rotate(-15deg);
+    }
+    20%,
+    40% {
+      transform: rotate(15deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+  }
+
+  .animation-shadow {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Optional: Add subtle animation to chat button */
+  .chat_animation:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  // Back to top functionality
+  const backToTopBtn = document.querySelector(".to-top-pc a");
+  backToTopBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>

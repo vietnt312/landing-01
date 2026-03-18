@@ -7,16 +7,12 @@ const slides = getSlides();
 
 <section id="hero" class="relative w-full overflow-hidden">
   <!-- Slides -->
-  <div id="slider-track" class="relative">
+  <div id="slider-track" class="flex transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing select-none">
     {
       slides.map((slide, i) => (
         <div
           id={`slide-${i}`}
-          class:list={[
-            "slide absolute inset-0 min-h-[560px] md:min-h-[680px] bg-cover bg-center flex items-center",
-            "transition-opacity duration-700",
-            i === 0 ? "opacity-100 relative" : "opacity-0 pointer-events-none",
-          ]}
+          class="slide flex-shrink-0 w-full min-h-[560px] md:min-h-[680px] bg-cover bg-center flex items-center relative"
           style={`background-image: url('${imgSrc(slide.image)}')`}
           aria-hidden={i !== 0}
         >
@@ -98,21 +94,44 @@ const slides = getSlides();
     let current = 0;
     let timer = null;
 
+    // Drag/swipe variables
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    let dragOffset = 0;
+    const swipeThreshold = 50; // minimum distance for swipe in pixels
+
     const slideEls = document.querySelectorAll(".slide");
     const dots = document.querySelectorAll(".dot");
+    const sliderTrack = document.getElementById("slider-track");
+
+    function updateTransform(transition = true) {
+      if (!sliderTrack) return;
+
+      if (transition) {
+        sliderTrack.style.transition = "transform 0.7s ease-out";
+      } else {
+        sliderTrack.style.transition = "none";
+      }
+
+      const offset = -(current * 100) + dragOffset;
+      sliderTrack.style.transform = `translateX(${offset}%)`;
+    }
 
     function goTo(index) {
-      slideEls[current].classList.replace("opacity-100", "opacity-0");
-      slideEls[current].classList.add("pointer-events-none");
-      slideEls[current].setAttribute("aria-hidden", "true");
+      // Update dots
       dots[current].classList.replace("bg-brand-gold", "bg-white/50");
+
+      // Update aria-hidden
+      slideEls[current].setAttribute("aria-hidden", "true");
 
       current = (index + total) % total;
 
-      slideEls[current].classList.replace("opacity-0", "opacity-100");
-      slideEls[current].classList.remove("pointer-events-none");
       slideEls[current].setAttribute("aria-hidden", "false");
       dots[current].classList.replace("bg-white/50", "bg-brand-gold");
+
+      dragOffset = 0;
+      updateTransform(true);
     }
 
     function startAutoPlay() {
@@ -124,6 +143,65 @@ const slides = getSlides();
       startAutoPlay();
     }
 
+    // Drag/swipe handlers
+    function handleDragStart(e) {
+      isDragging = true;
+      startX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+      currentX = startX;
+
+      // Disable transition during drag
+      if (sliderTrack) {
+        sliderTrack.style.transition = "none";
+      }
+    }
+
+    function handleDragMove(e) {
+      if (!isDragging) return;
+
+      currentX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+      const diff = currentX - startX;
+
+      // Calculate drag offset as percentage of viewport width
+      const viewportWidth = window.innerWidth;
+      dragOffset = (diff / viewportWidth) * 100;
+
+      updateTransform(false);
+    }
+
+    function handleDragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const diff = startX - currentX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          // Swiped left - go to next
+          goTo(current + 1);
+        } else {
+          // Swiped right - go to previous
+          goTo(current - 1);
+        }
+        resetAutoPlay();
+      } else {
+        // Snap back to current slide
+        dragOffset = 0;
+        updateTransform(true);
+      }
+    }
+
+    // Mouse events for desktop drag
+    sliderTrack?.addEventListener("mousedown", handleDragStart);
+    sliderTrack?.addEventListener("mousemove", handleDragMove);
+    sliderTrack?.addEventListener("mouseup", handleDragEnd);
+    sliderTrack?.addEventListener("mouseleave", handleDragEnd);
+
+    // Touch events for mobile swipe
+    sliderTrack?.addEventListener("touchstart", handleDragStart, { passive: true });
+    sliderTrack?.addEventListener("touchmove", handleDragMove, { passive: true });
+    sliderTrack?.addEventListener("touchend", handleDragEnd);
+
+    // Arrow button handlers
     document.getElementById("slider-prev")?.addEventListener("click", () => {
       goTo(current - 1);
       resetAutoPlay();
@@ -134,6 +212,7 @@ const slides = getSlides();
       resetAutoPlay();
     });
 
+    // Dot indicator handlers
     dots.forEach((dot) => {
       dot.addEventListener("click", () => {
         goTo(Number(dot.dataset.index));
@@ -141,6 +220,8 @@ const slides = getSlides();
       });
     });
 
+    // Initialize position
+    updateTransform(false);
     startAutoPlay();
   }
 </script>
