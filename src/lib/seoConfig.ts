@@ -5,7 +5,7 @@ export const SEO = {
   defaultTitle: "Bê Thui Hà Nội – Nhà hàng Bê thui chính gốc Hà Nội",
   defaultDescription:
     "Hệ thống Nhà hàng Bê thui Hà Nội – thưởng thức bê thui truyền thống, không gian sân vườn thoáng mát.",
-  defaultOgImage: "https://www.bethuihanoi.com/images/og.png",
+  defaultOgImage: "https://www.bethuihanoi.com/og.png",
   schemaType: "Restaurant" as const,
 } as const;
 
