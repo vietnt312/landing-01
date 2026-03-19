@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import MenuCard from "@/components/ui/MenuCard.astro";
 import { getMenuItems, getText as t } from "@/lib/googleSheets";
 import PageHeader from "@/components/ui/PageHeader.astro";
+import { PAGE_SEO } from "@/lib/seoConfig";
 
 const items = await getMenuItems();
 const catSet = ["all"];
@@ -22,10 +23,7 @@ const categories = [
 ];
 ---
 
-<BaseLayout
-  title="Thực đơn - Bê Thui Hà Nội"
-  description="Khám phá thực đơn phong phú tại Bê Thui Hà Nội"
->
+<BaseLayout {...PAGE_SEO.menu}>
   <PageHeader title={t("pages.menu.header_title")} />
 
   <section class="py-12">

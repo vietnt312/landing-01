@@ -1,14 +1,13 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
+import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://www.achub.site",
-  // base: "/landing-01",
-  integrations: [tailwind()],
+  site: "https://www.bethuihanoi.com",
+  integrations: [tailwind(), sitemap()],
   output: "static",
   image: {
-    // Allow any remote image host (images come from user-supplied Google Sheets URLs)
     remotePatterns: [{ protocol: "https" }, { protocol: "http" }],
   },
 });

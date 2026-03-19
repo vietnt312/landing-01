@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getText as t, getSiteConfig } from "@/lib/googleSheets";
+import { PAGE_SEO } from "@/lib/seoConfig";
 
 const config = getSiteConfig();
 import PageHeader from "@/components/ui/PageHeader.astro";
@@ -38,7 +39,7 @@ const mapData = locations.map((loc) => ({
 }));
 ---
 
-<BaseLayout title="Liên hệ - Bê Thui Hà Nội" description="Liên hệ with Nhà hàng Bê Thui Hà Nội">
+<BaseLayout {...PAGE_SEO.contact}>
   <PageHeader title={t("pages.contact.header_title")} />
 
   <section class="py-16">

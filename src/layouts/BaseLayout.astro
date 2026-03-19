@@ -4,15 +4,21 @@ import Header from "@/components/layout/Header.astro";
 import Footer from "@/components/layout/Footer.astro";
 import FloatingToolbar from "@/components/layout/FloatingToolbar.astro";
 import "@/styles/global.css";
+import { SEO } from "@/lib/seoConfig";
+import { getSiteConfig } from "@/lib/googleSheets";
 
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
+  noindex?: boolean;
 }
 
 const {
-  title = "Bê Thui Hà Nội",
-  description = "Hệ thống Nhà hàng Bê thui Hà Nội - Quán nhậu sân vườn",
+  title = SEO.defaultTitle,
+  description = SEO.defaultDescription,
+  ogImage = SEO.defaultOgImage,
+  noindex = false,
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
@@ -20,6 +26,25 @@ const path = Astro.url.pathname;
 let addPadding = false;
 const currentPath = path.replace(/\/$/, "") || "/";
 addPadding = !(currentPath.endsWith("/index.html") || currentPath.endsWith(base));
+
+const canonicalUrl = `${SEO.siteUrl}${Astro.url.pathname}`;
+
+const siteConfig = getSiteConfig();
+const sameAs = [siteConfig.facebook, siteConfig.tiktok, siteConfig.youtube].filter(Boolean);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": SEO.schemaType,
+  name: SEO.siteName,
+  url: SEO.siteUrl,
+  telephone: siteConfig.hotline,
+  email: siteConfig.email,
+  location: [
+    { "@type": "PostalAddress", address: siteConfig.address },
+    { "@type": "PostalAddress", address: siteConfig.address2 },
+  ],
+  ...(sameAs.length > 0 ? { sameAs } : {}),
+};
 ---
 
 <!doctype html>
@@ -27,9 +52,30 @@ addPadding = !(currentPath.endsWith("/index.html") || currentPath.endsWith(base)
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/png" href={favicon.src} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={SEO.locale} />
+    <meta property="og:site_name" content={SEO.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    <!-- JSON-LD -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
